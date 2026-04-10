@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NBA Playoff Survivor Pool 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c26;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --accent: #f5a623;
+    --accent2: #e8480a;
+    --text: #f0f0f0;
+    --text2: #9090a8;
+    --text3: #5a5a72;
+    --alive: #22c55e;
+    --dead: #ef4444;
+    --locked: #f59e0b;
+    --east: #3b82f6;
+    --west: #a855f7;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    font-size: 15px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .header-title span { color: var(--text); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .player-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .btn-admin {
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    border-radius: var(--radius);
+    padding: 6px 14px;
+    font-size: 12px;
+    font-family: 'Barlow', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-admin:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* MAIN */
+  .main { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+
+  /* POT BANNER */
+  .pot-banner {
+    background: linear-gradient(135deg, #1a1206 0%, #1c1226 100%);
+    border: 1px solid rgba(245,166,35,0.25);
+    border-radius: var(--radius);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .pot-amount {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 42px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .pot-label { font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .pot-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .pot-stat { text-align: center; }
+  .pot-stat-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px; }
+  .pot-stat-lbl { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .last-updated { font-size: 11px; color: var(--text3); }
+
+  /* SECTION HEADERS */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    margin-top: 28px;
+  }
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text2);
+  }
+  .conference-tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+  .tag-east { background: rgba(59,130,246,0.15); color: var(--east); border: 1px solid rgba(59,130,246,0.3); }
+  .tag-west { background: rgba(168,85,247,0.15); color: var(--west); border: 1px solid rgba(168,85,247,0.3); }
+
+  /* STANDINGS GRID */
+  .standings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .player-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    transition: border-color 0.2s;
+  }
+  .player-card:hover { border-color: var(--border2); }
+  .player-card.is-me { border-color: rgba(245,166,35,0.35); }
+  .player-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .player-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .status-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .pill-alive { background: rgba(34,197,94,0.12); color: var(--alive); border: 1px solid rgba(34,197,94,0.25); }
+  .pill-dead { background: rgba(239,68,68,0.12); color: var(--dead); border: 1px solid rgba(239,68,68,0.25); }
+  .pill-elim-date { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+  .conference-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-top: 1px solid var(--border);
+  }
+  .conf-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    min-width: 40px;
+  }
+  .conf-label.east { color: var(--east); }
+  .conf-label.west { color: var(--west); }
+  .conf-pick {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .conf-pick.eliminated { color: var(--dead); text-decoration: line-through; }
+  .conf-pick.alive { color: var(--alive); }
+  .conf-pick.no-pick { color: var(--text3); font-style: italic; }
+  .conf-pick.pending { color: var(--locked); }
+  .pick-round { font-size: 10px; color: var(--text3); margin-left: 6px; }
+
+  /* USED TEAMS */
+  .used-teams {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .used-team-tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--surface2);
+    color: var(--text3);
+    border: 1px solid var(--border);
+  }
+
+  /* SERIES GRID */
+  .series-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .series-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .series-card.locked::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--locked);
+  }
+  .series-card.complete::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--alive);
+  }
+  .series-round-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 8px;
+  }
+  .series-matchup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .series-team {
+    flex: 1;
+    text-align: center;
+  }
+  .series-team-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .series-team-name.winner { color: var(--alive); }
+  .series-team-name.loser { color: var(--text3); text-decoration: line-through; }
+  .series-seed { font-size: 10px; color: var(--text3); }
+  .series-wins { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .series-vs {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text3);
+  }
+  .series-status-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 10px;
+  }
+  .badge-pre { background: rgba(90,90,114,0.2); color: var(--text3); }
+  .badge-live { background: rgba(239,68,68,0.15); color: var(--dead); }
+  .badge-locked { background: rgba(245,158,11,0.15); color: var(--locked); }
+  .badge-complete { background: rgba(34,197,94,0.12); color: var(--alive); }
+
+  /* PICK PANEL */
+  .pick-panel {
+    background: var(--surface);
+    border: 1px solid rgba(245,166,35,0.3);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 28px;
+  }
+  .pick-panel-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .pick-panel-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+  .pick-conference-section { margin-bottom: 20px; }
+  .pick-conf-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .pick-conf-label.east { color: var(--east); }
+  .pick-conf-label.west { color: var(--west); }
+  .pick-teams-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pick-team-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pick-team-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .pick-team-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .pick-team-btn.used { opacity: 0.25; cursor: not-allowed; border-style: dashed; }
+  .pick-team-btn.selected { background: rgba(245,166,35,0.15); border-color: var(--accent); color: var(--accent); }
+  .pick-team-btn.locked-series { opacity: 0.3; cursor: not-allowed; }
+  .pick-already-made {
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--alive);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* FINALS PANEL */
+  .finals-panel {
+    background: linear-gradient(135deg, #0f1a0f 0%, #0f0f1a 100%);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 28px;
+  }
+  .finals-panel-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--alive);
+    margin-bottom: 4px;
+  }
+  .finals-panel-sub { font-size: 13px; color: var(--text2); margin-bottom: 16px; }
+  .finals-inputs { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+  .finals-field { display: flex; flex-direction: column; gap: 6px; }
+  .finals-field label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.07em; }
+  .finals-field select, .finals-field input {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 8px 12px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    min-width: 160px;
+  }
+  .finals-field select option { background: #1c1c26; }
+
+  /* LOGIN SCREEN */
+  .login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    padding: 20px;
+  }
+  .login-box {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  .login-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .login-logo span { color: var(--text); }
+  .login-sub { font-size: 13px; color: var(--text2); margin-bottom: 28px; }
+  .login-field { margin-bottom: 14px; text-align: left; }
+  .login-field label { display: block; font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .login-field input, .login-field select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 10px 14px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+  }
+  .login-field input:focus, .login-field select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .login-field select option { background: #1c1c26; }
+  .login-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.15s;
+  }
+  .login-btn:hover { opacity: 0.88; }
+  .login-new { margin-top: 12px; }
+  .login-new-btn {
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    border-radius: 8px;
+    padding: 10px;
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .login-new-btn:hover { border-color: var(--text2); color: var(--text); }
+  .login-error { color: var(--dead); font-size: 13px; margin-top: 10px; }
+
+  /* ADMIN PANEL */
+  .admin-panel {
+    background: var(--surface);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 28px;
+  }
+  .admin-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--dead);
+    margin-bottom: 16px;
+  }
+  .admin-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .btn-danger {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: var(--dead);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-danger:hover { background: rgba(239,68,68,0.2); }
+  .btn-secondary {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--text2); color: var(--text); }
+  .admin-field { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .admin-field input, .admin-field select {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 8px 12px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.75);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+  .modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 420px;
+  }
+  .modal-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+  }
+  .modal-field { margin-bottom: 12px; }
+  .modal-field label { display: block; font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .modal-field input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 9px 13px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+  }
+  .modal-field input:focus { outline: none; border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .modal-actions button { flex: 1; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 300;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    max-width: 320px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-color: rgba(34,197,94,0.4); color: var(--alive); }
+  .toast.error { border-color: rgba(239,68,68,0.4); color: var(--dead); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .standings-grid { grid-template-columns: 1fr; }
+    .series-grid { grid-template-columns: 1fr; }
+    .pot-banner { flex-direction: column; }
+    .pick-teams-grid { gap: 6px; }
+    .pick-team-btn { padding: 7px 12px; font-size: 12px; }
+  }
+
+  .divider { height: 1px; background: var(--border); margin: 32px 0; }
+  .empty-state { text-align: center; padding: 40px; color: var(--text3); font-size: 14px; }
+  .refresh-btn {
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-family: 'Barlow', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .no-series-msg { font-size: 13px; color: var(--text3); padding: 12px 0; }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIGURATION — update PROXY_URL after deploying Apps Script
+// ============================================================
+const CONFIG = {
+  PROXY_URL: 'https://script.google.com/macros/s/AKfycbyLXb2p97PRkT2yH8TGNdaT_HjobcAEGzIst66cEkocBdt_T4Vlh-pdfYU7oyCEXVyNew/exec', // paste your deployed Apps Script URL
+  ADMIN_PASSWORD: 'playoff2025',           // change this before sharing
+  BUY_IN: 20,
+  REFRESH_INTERVAL: 300000,               // auto-refresh every 5 minutes
+  STORAGE_KEY: 'nba_pool_data_v1'
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  players: [],          // { id, name, eastPicks: [{team, round, date}], westPicks: [{team, round, date}], eastAlive: true, westAlive: true, eastEliminatedDate: null, westEliminatedDate: null, finalsPick: null, finalsGames: null }
+  series: [],           // from ESPN API
+  rounds: [],
+  currentPlayer: null,  // logged-in player id
+  isAdmin: false,
+  lastUpdated: null,
+  apiError: false
+};
+
+// ============================================================
+// STORAGE
+// ============================================================
+function saveState() {
+  try {
+    const toSave = { players: state.players, lastUpdated: state.lastUpdated };
+    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(toSave));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(CONFIG.STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      state.players = parsed.players || [];
+      state.lastUpdated = parsed.lastUpdated || null;
+    }
+  } catch(e) {}
+}
+
+// ============================================================
+// ESPN API
+// ============================================================
+async function fetchPlayoffData() {
+  if (!CONFIG.PROXY_URL || CONFIG.PROXY_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    // Demo mode with sample data
+    loadDemoData();
+    return;
+  }
+  try {
+    const res = await fetch(CONFIG.PROXY_URL + '?action=playoffs');
+    const json = await res.json();
+    if (json.success && json.data) {
+      state.series = json.data.series || [];
+      state.rounds = json.data.rounds || [];
+      state.lastUpdated = new Date().toISOString();
+      autoUpdateEliminations();
+      saveState();
+    } else {
+      state.apiError = true;
+    }
+  } catch(e) {
+    state.apiError = true;
+    loadDemoData();
+  }
+}
+
+function loadDemoData() {
+  // Sample first-round matchups for demo/testing
+  const eastSeries = [
+    { id: 'e1', round: 1, roundName: 'First Round', conference: 'Eastern', status: 'pre', tipped: false, winner: null, teams: [{id:'1',name:'Cleveland Cavaliers',abbrev:'CLE',seed:1,wins:0},{id:'2',name:'Miami Heat',abbrev:'MIA',seed:8,wins:0}] },
+    { id: 'e2', round: 1, roundName: 'First Round', conference: 'Eastern', status: 'pre', tipped: false, winner: null, teams: [{id:'3',name:'Boston Celtics',abbrev:'BOS',seed:2,wins:0},{id:'4',name:'Orlando Magic',abbrev:'ORL',seed:7,wins:0}] },
+    { id: 'e3', round: 1, roundName: 'First Round', conference: 'Eastern', status: 'pre', tipped: false, winner: null, teams: [{id:'5',name:'New York Knicks',abbrev:'NYK',seed:3,wins:0},{id:'6',name:'Detroit Pistons',abbrev:'DET',seed:6,wins:0}] },
+    { id: 'e4', round: 1, roundName: 'First Round', conference: 'Eastern', status: 'pre', tipped: false, winner: null, teams: [{id:'7',name:'Indiana Pacers',abbrev:'IND',seed:4,wins:0},{id:'8',name:'Milwaukee Bucks',abbrev:'MIL',seed:5,wins:0}] },
+  ];
+  const westSeries = [
+    { id: 'w1', round: 1, roundName: 'First Round', conference: 'Western', status: 'pre', tipped: false, winner: null, teams: [{id:'11',name:'Oklahoma City Thunder',abbrev:'OKC',seed:1,wins:0},{id:'12',name:'Memphis Grizzlies',abbrev:'MEM',seed:8,wins:0}] },
+    { id: 'w2', round: 1, roundName: 'First Round', conference: 'Western', status: 'pre', tipped: false, winner: null, teams: [{id:'13',name:'Houston Rockets',abbrev:'HOU',seed:2,wins:0},{id:'14',name:'Golden State Warriors',abbrev:'GSW',seed:7,wins:0}] },
+    { id: 'w3', round: 1, roundName: 'First Round', conference: 'Western', status: 'pre', tipped: false, winner: null, teams: [{id:'15',name:'Los Angeles Lakers',abbrev:'LAL',seed:3,wins:0},{id:'16',name:'Minnesota Timberwolves',abbrev:'MIN',seed:6,wins:0}] },
+    { id: 'w4', round: 1, roundName: 'First Round', conference: 'Western', status: 'pre', tipped: false, winner: null, teams: [{id:'17',name:'Denver Nuggets',abbrev:'DEN',seed:4,wins:0},{id:'18',name:'Los Angeles Clippers',abbrev:'LAC',seed:5,wins:0}] },
+  ];
+  state.series = [...eastSeries, ...westSeries];
+  state.lastUpdated = new Date().toISOString();
+  state.apiError = false;
+}
+
+// ============================================================
+// LOGIC HELPERS
+// ============================================================
+function getConferenceSeries(conf) {
+  return state.series.filter(s => s.conference && s.conference.toLowerCase().includes(conf.toLowerCase()));
+}
+
+function getCurrentRound(conf) {
+  const confSeries = getConferenceSeries(conf);
+  // Find the lowest round number that has at least one non-complete series
+  const active = confSeries.filter(s => s.status !== 'post');
+  if (active.length === 0) return null;
+  return Math.min(...active.map(s => s.round));
+}
+
+function getPickableTeams(conf, playerId) {
+  const player = state.players.find(p => p.id === playerId);
+  if (!player) return [];
+
+  const usedTeams = conf === 'east'
+    ? (player.eastPicks || []).map(p => p.team)
+    : (player.westPicks || []).map(p => p.team);
+
+  const currentRound = getCurrentRound(conf);
+  if (!currentRound) return [];
+
+  const roundSeries = getConferenceSeries(conf).filter(s => s.round === currentRound && s.status !== 'post');
+  const availableTeams = [];
+
+  roundSeries.forEach(series => {
+    series.teams.forEach(team => {
+      if (!series.tipped && !usedTeams.includes(team.name)) {
+        availableTeams.push({ ...team, seriesId: series.id, locked: false });
+      } else if (series.tipped && !usedTeams.includes(team.name)) {
+        availableTeams.push({ ...team, seriesId: series.id, locked: true });
+      }
+    });
+  });
+
+  return availableTeams;
+}
+
+function getPlayerCurrentPick(conf, playerId) {
+  const player = state.players.find(p => p.id === playerId);
+  if (!player) return null;
+  const picks = conf === 'east' ? (player.eastPicks || []) : (player.westPicks || []);
+  const currentRound = getCurrentRound(conf);
+  if (!currentRound) return null;
+  return picks.find(p => p.round === currentRound) || null;
+}
+
+function getAllUsedTeams(conf, playerId) {
+  const player = state.players.find(p => p.id === playerId);
+  if (!player) return [];
+  const picks = conf === 'east' ? (player.eastPicks || []) : (player.westPicks || []);
+  return picks.map(p => p.team);
+}
+
+function autoUpdateEliminations() {
+  // Check each series result and eliminate players whose picks lost
+  state.series.forEach(series => {
+    if (series.status === 'post' && series.winner) {
+      const losingTeams = series.teams.filter(t => t.name !== series.winner).map(t => t.name);
+      const conf = series.conference.toLowerCase().includes('east') ? 'east' : 'west';
+
+      state.players.forEach(player => {
+        const picks = conf === 'east' ? (player.eastPicks || []) : (player.westPicks || []);
+        const thisRoundPick = picks.find(p => p.round === series.round);
+        if (thisRoundPick && losingTeams.includes(thisRoundPick.team)) {
+          if (conf === 'east' && player.eastAlive) {
+            player.eastAlive = false;
+            player.eastEliminatedDate = series.endDate || new Date().toISOString().split('T')[0];
+          }
+          if (conf === 'west' && player.westAlive) {
+            player.westAlive = false;
+            player.westEliminatedDate = series.endDate || new Date().toISOString().split('T')[0];
+          }
+        }
+      });
+    }
+  });
+}
+
+function isFinalsTime() {
+  const confFinalsSeries = state.series.filter(s => s.round === 4);
+  return confFinalsSeries.some(s => s.status === 'post') || state.series.some(s => s.round === 5);
+}
+
+function getStandings() {
+  return state.players.map(p => {
+    const eastAlive = p.eastAlive;
+    const westAlive = p.westAlive;
+    const holdsBoth = eastAlive && westAlive;
+    const holdsOne = (eastAlive || westAlive) && !holdsBoth;
+    const eliminated = !eastAlive && !westAlive;
+
+    let lastSurvived = null;
+    if (eliminated) {
+      const d1 = p.eastEliminatedDate;
+      const d2 = p.westEliminatedDate;
+      if (d1 && d2) lastSurvived = d1 > d2 ? d1 : d2;
+      else lastSurvived = d1 || d2;
+    }
+
+    return { ...p, holdsBoth, holdsOne, eliminated, lastSurvived };
+  }).sort((a, b) => {
+    if (a.holdsBoth && !b.holdsBoth) return -1;
+    if (!a.holdsBoth && b.holdsBoth) return 1;
+    if (a.holdsOne && b.eliminated) return -1;
+    if (a.eliminated && b.holdsOne) return 1;
+    return a.name.localeCompare(b.name);
+  });
+}
+
+function submitPick(conf, teamName, round) {
+  const player = state.players.find(p => p.id === state.currentPlayer);
+  if (!player) return false;
+
+  const picks = conf === 'east' ? (player.eastPicks = player.eastPicks || []) : (player.westPicks = player.westPicks || []);
+  const existing = picks.find(p => p.round === round);
+  if (existing) return false; // already picked this round
+
+  picks.push({ team: teamName, round, date: new Date().toISOString() });
+  saveState();
+  return true;
+}
+
+function submitFinalsPick(champion, games) {
+  const player = state.players.find(p => p.id === state.currentPlayer);
+  if (!player) return false;
+  player.finalsPick = champion;
+  player.finalsGames = parseInt(games);
+  saveState();
+  return true;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  const app = document.getElementById('app');
+
+  if (!state.currentPlayer) {
+    app.innerHTML = renderLogin();
+    attachLoginEvents();
+    return;
+  }
+
+  const player = state.players.find(p => p.id === state.currentPlayer);
+  app.innerHTML = `
+    ${renderHeader(player)}
+    <div class="main">
+      ${state.isAdmin ? renderAdminPanel() : ''}
+      ${renderPotBanner()}
+      ${renderPickPanel()}
+      ${renderFinalsPanel()}
+      ${renderStandings()}
+      ${renderSeriesSection()}
+    </div>
+    ${renderAdminModal()}
+  `;
+  attachMainEvents();
+}
+
+function renderLogin() {
+  const hasPlayers = state.players.length > 0;
+  return `
+    <div class="login-screen">
+      <div class="login-box">
+        <div class="login-logo">NBA <span>Pool</span></div>
+        <div class="login-sub">2025 Playoff Survivor Pool</div>
+
+        ${hasPlayers ? `
+        <div class="login-field">
+          <label>Select your name</label>
+          <select id="login-select">
+            <option value="">— choose —</option>
+            ${state.players.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+          </select>
+        </div>
+        <button class="login-btn" onclick="handleLogin()">Enter Pool →</button>
+        <div class="login-new">
+          <button class="login-new-btn" onclick="showNewPlayer()">New player? Join here</button>
+        </div>
+        ` : `
+        <div class="login-field">
+          <label>Your name</label>
+          <input type="text" id="new-player-name" placeholder="Enter your name" />
+        </div>
+        <button class="login-btn" onclick="handleNewPlayer()">Join Pool →</button>
+        `}
+        <div style="margin-top:16px;">
+          <button class="btn-admin" onclick="showAdminLogin()">Commissioner login</button>
+        </div>
+        <div class="login-error" id="login-error"></div>
+      </div>
+    </div>
+    ${renderAdminModal()}
+  `;
+}
+
+function renderHeader(player) {
+  return `
+    <div class="header">
+      <div class="header-title">NBA <span>Pool</span></div>
+      <div class="header-right">
+        <div class="player-badge" onclick="handleLogout()">
+          ${player ? player.name : ''} &nbsp;✕
+        </div>
+        ${!state.isAdmin ? `<button class="btn-admin" onclick="showAdminLogin()">Admin</button>` : `<button class="btn-admin" style="color:var(--dead)" onclick="state.isAdmin=false;render()">Exit Admin</button>`}
+        <button class="refresh-btn" onclick="handleRefresh()" id="refresh-btn">↻ Refresh</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderPotBanner() {
+  const total = state.players.length * CONFIG.BUY_IN;
+  const alive = state.players.filter(p => p.eastAlive || p.westAlive).length;
+  const updated = state.lastUpdated ? new Date(state.lastUpdated).toLocaleTimeString() : 'Never';
+  return `
+    <div class="pot-banner">
+      <div>
+        <div class="pot-label">Total pot</div>
+        <div class="pot-amount">$${total}</div>
+      </div>
+      <div class="pot-stats">
+        <div class="pot-stat">
+          <div class="pot-stat-val" style="color:var(--alive)">${alive}</div>
+          <div class="pot-stat-lbl">Still alive</div>
+        </div>
+        <div class="pot-stat">
+          <div class="pot-stat-val">${state.players.length}</div>
+          <div class="pot-stat-lbl">Players</div>
+        </div>
+        <div class="pot-stat">
+          <div class="pot-stat-val" style="color:var(--accent)">$${CONFIG.BUY_IN}</div>
+          <div class="pot-stat-lbl">Buy-in</div>
+        </div>
+      </div>
+      <div class="last-updated">Last updated: ${updated} ${state.apiError ? '⚠ Demo mode' : ''}</div>
+    </div>
+  `;
+}
+
+function renderPickPanel() {
+  const player = state.players.find(p => p.id === state.currentPlayer);
+  if (!player) return '';
+
+  const eastAlive = player.eastAlive;
+  const westAlive = player.westAlive;
+
+  if (!eastAlive && !westAlive) {
+    return `<div class="pick-panel" style="border-color:rgba(239,68,68,0.2)">
+      <div class="pick-panel-title" style="color:var(--dead)">You've Been Eliminated</div>
+      <div class="pick-panel-sub">Both your East and West picks have been knocked out. Better luck next year.</div>
+    </div>`;
+  }
+
+  let eastSection = '';
+  let westSection = '';
+
+  if (eastAlive) {
+    const currentRound = getCurrentRound('east');
+    const existingPick = getPlayerCurrentPick('east', player.id);
+    const pickable = getPickableTeams('east', player.id);
+    const usedTeams = getAllUsedTeams('east', player.id);
+
+    if (existingPick) {
+      eastSection = `
+        <div class="pick-conference-section">
+          <div class="pick-conf-label east">East — Round ${currentRound || '?'}</div>
+          <div class="pick-already-made">✓ Picked: <strong>${existingPick.team}</strong></div>
+          ${usedTeams.length > 1 ? `<div class="used-teams">${usedTeams.map(t => `<span class="used-team-tag">${t}</span>`).join('')}</div>` : ''}
+        </div>`;
+    } else if (currentRound) {
+      eastSection = `
+        <div class="pick-conference-section">
+          <div class="pick-conf-label east">East — Round ${currentRound} Pick</div>
+          <div class="pick-teams-grid" id="east-pick-grid">
+            ${pickable.length === 0 ? '<div style="color:var(--text3);font-size:13px;">No available teams — all series have tipped or teams already used.</div>' : ''}
+            ${pickable.map(t => `
+              <button class="pick-team-btn${t.locked ? ' locked-series' : ''}" 
+                data-team="${t.name}" data-conf="east" data-round="${currentRound}"
+                ${t.locked ? 'disabled title="Series already started"' : ''}
+                onclick="handlePickSelect(this,'east')">
+                ${t.abbrev || t.name}${t.seed ? ` <span style="opacity:0.5;font-size:11px;">#${t.seed}</span>` : ''}
+              </button>`).join('')}
+          </div>
+          ${usedTeams.length > 0 ? `<div class="used-teams" style="margin-top:10px">${usedTeams.map(t=>`<span class="used-team-tag">${t}</span>`).join('')}</div>` : ''}
+          <button class="btn-primary" id="east-submit-btn" disabled onclick="handleSubmitPick('east')">Lock East Pick</button>
+        </div>`;
+    } else {
+      eastSection = `<div class="pick-conference-section"><div class="pick-conf-label east">East</div><div style="font-size:13px;color:var(--text3)">No active round yet.</div></div>`;
+    }
+  }
+
+  if (westAlive) {
+    const currentRound = getCurrentRound('west');
+    const existingPick = getPlayerCurrentPick('west', player.id);
+    const pickable = getPickableTeams('west', player.id);
+    const usedTeams = getAllUsedTeams('west', player.id);
+
+    if (existingPick) {
+      westSection = `
+        <div class="pick-conference-section">
+          <div class="pick-conf-label west">West — Round ${currentRound || '?'}</div>
+          <div class="pick-already-made">✓ Picked: <strong>${existingPick.team}</strong></div>
+          ${usedTeams.length > 1 ? `<div class="used-teams">${usedTeams.map(t => `<span class="used-team-tag">${t}</span>`).join('')}</div>` : ''}
+        </div>`;
+    } else if (currentRound) {
+      westSection = `
+        <div class="pick-conference-section">
+          <div class="pick-conf-label west">West — Round ${currentRound} Pick</div>
+          <div class="pick-teams-grid" id="west-pick-grid">
+            ${pickable.length === 0 ? '<div style="color:var(--text3);font-size:13px;">No available teams — all series have tipped or teams already used.</div>' : ''}
+            ${pickable.map(t => `
+              <button class="pick-team-btn${t.locked ? ' locked-series' : ''}"
+                data-team="${t.name}" data-conf="west" data-round="${currentRound}"
+                ${t.locked ? 'disabled title="Series already started"' : ''}
+                onclick="handlePickSelect(this,'west')">
+                ${t.abbrev || t.name}${t.seed ? ` <span style="opacity:0.5;font-size:11px;">#${t.seed}</span>` : ''}
+              </button>`).join('')}
+          </div>
+          ${usedTeams.length > 0 ? `<div class="used-teams" style="margin-top:10px">${usedTeams.map(t=>`<span class="used-team-tag">${t}</span>`).join('')}</div>` : ''}
+          <button class="btn-primary" id="west-submit-btn" disabled onclick="handleSubmitPick('west')">Lock West Pick</button>
+        </div>`;
+    } else {
+      westSection = `<div class="pick-conference-section"><div class="pick-conf-label west">West</div><div style="font-size:13px;color:var(--text3)">No active round yet.</div></div>`;
+    }
+  }
+
+  return `
+    <div class="pick-panel">
+      <div class="pick-panel-title">Make Your Picks</div>
+      <div class="pick-panel-sub">Select a team to survive into the next round. You cannot reuse a team.</div>
+      ${eastSection}
+      ${westSection}
+    </div>`;
+}
+
+function renderFinalsPanel() {
+  if (!isFinalsTime()) return '';
+  const player = state.players.find(p => p.id === state.currentPlayer);
+  if (!player || (!player.eastAlive && !player.westAlive)) return '';
+  if (player.finalsPick) {
+    return `<div class="finals-panel">
+      <div class="finals-panel-title">Finals Picks Submitted</div>
+      <div class="finals-panel-sub">Champion: <strong>${player.finalsPick}</strong> &nbsp;·&nbsp; Games: <strong>${player.finalsGames}</strong></div>
+    </div>`;
+  }
+
+  const finalists = state.series.filter(s => s.round === 4 && s.status === 'post' && s.winner).map(s => s.winner);
+
+  return `<div class="finals-panel">
+    <div class="finals-panel-title">Finals Tiebreaker Picks</div>
+    <div class="finals-panel-sub">Submit your Finals picks — used only as tiebreakers. Must be exact.</div>
+    <div class="finals-inputs">
+      <div class="finals-field">
+        <label>NBA Champion</label>
+        <select id="finals-champ">
+          <option value="">— select —</option>
+          ${finalists.map(t => `<option value="${t}">${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="finals-field">
+        <label>Number of games</label>
+        <select id="finals-games">
+          <option value="">—</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="handleFinalsPick()">Submit Finals Picks</button>
+    </div>
+  </div>`;
+}
+
+function renderStandings() {
+  const standings = getStandings();
+  if (standings.length === 0) return `<div class="empty-state">No players yet. Be the first to join!</div>`;
+
+  return `
+    <div class="section-header">
+      <div class="section-title">Standings</div>
+    </div>
+    <div class="standings-grid">
+      ${standings.map(p => renderPlayerCard(p)).join('')}
+    </div>`;
+}
+
+function renderPlayerCard(p) {
+  const isMe = p.id === state.currentPlayer;
+  const eastPicks = p.eastPicks || [];
+  const westPicks = p.westPicks || [];
+
+  const latestEast = eastPicks[eastPicks.length - 1];
+  const latestWest = westPicks[westPicks.length - 1];
+
+  const eastStatus = p.eastAlive ? 'alive' : 'eliminated';
+  const westStatus = p.westAlive ? 'alive' : 'eliminated';
+
+  return `<div class="player-card${isMe ? ' is-me' : ''}">
+    <div class="player-card-header">
+      <div class="player-name">${p.name}${isMe ? ' <span style="font-size:11px;color:var(--accent)">YOU</span>' : ''}</div>
+      <div>
+        <div class="status-pill ${(p.eastAlive || p.westAlive) ? 'pill-alive' : 'pill-dead'}">
+          ${p.holdsBoth ? '★ Both' : (p.eastAlive || p.westAlive) ? 'Alive' : 'Out'}
+        </div>
+        ${p.eliminated && p.lastSurvived ? `<div class="pill-elim-date">Out ${p.lastSurvived}</div>` : ''}
+      </div>
+    </div>
+    <div class="conference-row">
+      <span class="conf-label east">EAST</span>
+      ${latestEast
+        ? `<span class="conf-pick ${eastStatus}">${latestEast.team} <span class="pick-round">Rd ${latestEast.round}</span></span>`
+        : `<span class="conf-pick no-pick">No pick yet</span>`}
+    </div>
+    <div class="conference-row">
+      <span class="conf-label west">WEST</span>
+      ${latestWest
+        ? `<span class="conf-pick ${westStatus}">${latestWest.team} <span class="pick-round">Rd ${latestWest.round}</span></span>`
+        : `<span class="conf-pick no-pick">No pick yet</span>`}
+    </div>
+    ${(eastPicks.length > 1 || westPicks.length > 1) ? `
+    <div class="used-teams" style="margin-top:10px">
+      ${[...eastPicks.slice(0,-1).map(pp=>`<span class="used-team-tag" style="color:var(--east);border-color:rgba(59,130,246,0.2)">${pp.team}</span>`),
+         ...westPicks.slice(0,-1).map(pp=>`<span class="used-team-tag" style="color:var(--west);border-color:rgba(168,85,247,0.2)">${pp.team}</span>`)].join('')}
+    </div>` : ''}
+    ${p.finalsPick ? `<div style="font-size:11px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">Finals: ${p.finalsPick} in ${p.finalsGames}</div>` : ''}
+  </div>`;
+}
+
+function renderSeriesSection() {
+  const eastSeries = getConferenceSeries('east');
+  const westSeries = getConferenceSeries('west');
+
+  if (eastSeries.length === 0 && westSeries.length === 0) {
+    return `<div class="divider"></div><div class="empty-state">Playoff bracket not yet loaded. ${state.apiError ? 'Running in demo mode.' : 'Refresh to load.'}</div>`;
+  }
+
+  const renderConference = (conf, series) => {
+    const grouped = {};
+    series.forEach(s => {
+      const key = s.roundName || ('Round ' + s.round);
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(s);
+    });
+
+    return Object.entries(grouped).map(([rName, rSeries]) => `
+      <div class="section-header" style="margin-top:22px">
+        <div class="section-title">${conf} — ${rName}</div>
+        <span class="conference-tag tag-${conf.toLowerCase()}">${conf}</span>
+      </div>
+      <div class="series-grid">
+        ${rSeries.map(s => renderSeriesCard(s)).join('')}
+      </div>
+    `).join('');
+  };
+
+  return `
+    <div class="divider"></div>
+    <div class="section-header"><div class="section-title">Playoff Bracket</div></div>
+    ${renderConference('Eastern', eastSeries)}
+    ${renderConference('Western', westSeries)}
+  `;
+}
+
+function renderSeriesCard(s) {
+  const t1 = s.teams[0] || {};
+  const t2 = s.teams[1] || {};
+  let statusClass = 'pre', statusLabel = 'Upcoming', badgeClass = 'badge-pre';
+  if (s.tipped && s.status !== 'post') { statusClass = 'locked'; statusLabel = 'In Progress'; badgeClass = 'badge-locked'; }
+  if (s.status === 'post') { statusClass = 'complete'; statusLabel = 'Complete'; badgeClass = 'badge-complete'; }
+
+  return `<div class="series-card ${statusClass}">
+    <div class="series-round-label">${s.roundName || 'Round ' + s.round}</div>
+    <div class="series-matchup">
+      <div class="series-team">
+        <div class="series-seed">#${t1.seed || '?'}</div>
+        <div class="series-team-name ${s.winner === t1.name ? 'winner' : s.winner ? 'loser' : ''}">${t1.abbrev || t1.name || '?'}</div>
+        <div class="series-wins">${t1.wins || 0} W</div>
+      </div>
+      <div class="series-vs">vs</div>
+      <div class="series-team">
+        <div class="series-seed">#${t2.seed || '?'}</div>
+        <div class="series-team-name ${s.winner === t2.name ? 'winner' : s.winner ? 'loser' : ''}">${t2.abbrev || t2.name || '?'}</div>
+        <div class="series-wins">${t2.wins || 0} W</div>
+      </div>
+    </div>
+    <div><span class="series-status-badge ${badgeClass}">${statusLabel}</span></div>
+    ${s.winner ? `<div style="font-size:11px;color:var(--alive);margin-top:6px;">Winner: ${s.winner}</div>` : ''}
+  </div>`;
+}
+
+function renderAdminPanel() {
+  return `<div class="admin-panel">
+    <div class="admin-title">⚠ Commissioner Panel</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">Override player status, eliminate players manually, or reset picks.</div>
+    <div class="admin-grid">
+      ${state.players.map(p => `
+        <div style="background:var(--surface2);border-radius:8px;padding:10px 14px;font-size:13px;">
+          <strong>${p.name}</strong>
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+            <button class="btn-secondary" onclick="adminToggle('${p.id}','east')">${p.eastAlive ? 'Elim East' : 'Restore East'}</button>
+            <button class="btn-secondary" onclick="adminToggle('${p.id}','west')">${p.westAlive ? 'Elim West' : 'Restore West'}</button>
+            <button class="btn-danger" onclick="adminRemovePlayer('${p.id}')">Remove</button>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="admin-field" style="margin-top:8px">
+      <input type="text" id="admin-add-name" placeholder="Add player name" style="width:200px"/>
+      <button class="btn-secondary" onclick="adminAddPlayer()">Add Player</button>
+    </div>
+    <div style="margin-top:12px">
+      <button class="btn-danger" onclick="adminRefreshNow()">Force API Refresh</button>
+    </div>
+  </div>`;
+}
+
+function renderAdminModal() {
+  return `<div class="modal-overlay" id="admin-modal" style="display:none">
+    <div class="modal-box">
+      <div class="modal-title" id="modal-title">Commissioner Login</div>
+      <div class="modal-field" id="modal-body">
+        <label>Password</label>
+        <input type="password" id="admin-pw-input" placeholder="Enter password" />
+      </div>
+      <div class="login-error" id="modal-error"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="handleAdminLogin()">Enter</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ============================================================
+// EVENT HANDLERS
+// ============================================================
+let selectedPicks = { east: null, west: null };
+
+function attachLoginEvents() {
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      if (document.getElementById('login-select')) handleLogin();
+      if (document.getElementById('new-player-name')) handleNewPlayer();
+      if (document.getElementById('admin-pw-input')) handleAdminLogin();
+    }
+  });
+}
+
+function attachMainEvents() {
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && document.getElementById('admin-pw-input')) handleAdminLogin();
+  });
+}
+
+function handleLogin() {
+  const sel = document.getElementById('login-select');
+  if (!sel || !sel.value) { showError('login-error', 'Please select your name.'); return; }
+  state.currentPlayer = sel.value;
+  render();
+}
+
+function showNewPlayer() {
+  const box = document.querySelector('.login-box');
+  box.innerHTML = `
+    <div class="login-logo">NBA <span>Pool</span></div>
+    <div class="login-sub">Join the 2025 Playoff Survivor Pool</div>
+    <div class="login-field">
+      <label>Your name</label>
+      <input type="text" id="new-player-name" placeholder="Enter your name" autofocus />
+    </div>
+    <button class="login-btn" onclick="handleNewPlayer()">Join Pool →</button>
+    <div style="margin-top:10px"><button class="login-new-btn" onclick="renderLogin2()">← Back</button></div>
+    <div class="login-error" id="login-error"></div>
+  `;
+  attachLoginEvents();
+}
+
+function renderLogin2() { render(); }
+
+function handleNewPlayer() {
+  const inp = document.getElementById('new-player-name');
+  if (!inp || !inp.value.trim()) { showError('login-error', 'Please enter your name.'); return; }
+  const name = inp.value.trim();
+  if (state.players.find(p => p.name.toLowerCase() === name.toLowerCase())) {
+    showError('login-error', 'That name is already taken — select it from the list.');
+    return;
+  }
+  const id = 'p_' + Date.now();
+  state.players.push({ id, name, eastPicks: [], westPicks: [], eastAlive: true, westAlive: true, eastEliminatedDate: null, westEliminatedDate: null, finalsPick: null, finalsGames: null });
+  state.currentPlayer = id;
+  saveState();
+  render();
+  showToast('Welcome to the pool, ' + name + '!', 'success');
+}
+
+function handleLogout() {
+  state.currentPlayer = null;
+  state.isAdmin = false;
+  selectedPicks = { east: null, west: null };
+  render();
+}
+
+function handlePickSelect(btn, conf) {
+  const grid = document.getElementById(conf + '-pick-grid');
+  if (!grid) return;
+  grid.querySelectorAll('.pick-team-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedPicks[conf] = { team: btn.dataset.team, round: parseInt(btn.dataset.round) };
+  const submitBtn = document.getElementById(conf + '-submit-btn');
+  if (submitBtn) submitBtn.disabled = false;
+}
+
+function handleSubmitPick(conf) {
+  const pick = selectedPicks[conf];
+  if (!pick) return;
+  const ok = submitPick(conf, pick.team, pick.round);
+  if (ok) {
+    showToast(conf.toUpperCase() + ' pick locked: ' + pick.team, 'success');
+    selectedPicks[conf] = null;
+    render();
+  } else {
+    showToast('Could not submit pick.', 'error');
+  }
+}
+
+function handleFinalsPick() {
+  const champ = document.getElementById('finals-champ')?.value;
+  const games = document.getElementById('finals-games')?.value;
+  if (!champ || !games) { showToast('Please complete both fields.', 'error'); return; }
+  submitFinalsPick(champ, games);
+  showToast('Finals picks submitted!', 'success');
+  render();
+}
+
+async function handleRefresh() {
+  const btn = document.getElementById('refresh-btn');
+  if (btn) btn.innerHTML = '<span class="spinner"></span>';
+  await fetchPlayoffData();
+  render();
+  showToast('Data refreshed.', 'success');
+}
+
+function showAdminLogin() {
+  document.getElementById('admin-modal').style.display = 'flex';
+  setTimeout(() => document.getElementById('admin-pw-input')?.focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('admin-modal').style.display = 'none';
+}
+
+function handleAdminLogin() {
+  const pw = document.getElementById('admin-pw-input')?.value;
+  if (pw === CONFIG.ADMIN_PASSWORD) {
+    state.isAdmin = true;
+    closeModal();
+    if (!state.currentPlayer && state.players.length > 0) {
+      state.currentPlayer = state.players[0].id;
+    }
+    render();
+    showToast('Commissioner mode active.', 'success');
+  } else {
+    showError('modal-error', 'Incorrect password.');
+  }
+}
+
+function adminToggle(playerId, conf) {
+  const player = state.players.find(p => p.id === playerId);
+  if (!player) return;
+  if (conf === 'east') {
+    player.eastAlive = !player.eastAlive;
+    if (!player.eastAlive) player.eastEliminatedDate = new Date().toISOString().split('T')[0];
+    else player.eastEliminatedDate = null;
+  } else {
+    player.westAlive = !player.westAlive;
+    if (!player.westAlive) player.westEliminatedDate = new Date().toISOString().split('T')[0];
+    else player.westEliminatedDate = null;
+  }
+  saveState();
+  render();
+  showToast(player.name + ' ' + conf.toUpperCase() + ' status updated.', 'success');
+}
+
+function adminRemovePlayer(playerId) {
+  if (!confirm('Remove this player?')) return;
+  state.players = state.players.filter(p => p.id !== playerId);
+  if (state.currentPlayer === playerId) state.currentPlayer = state.players[0]?.id || null;
+  saveState();
+  render();
+}
+
+function adminAddPlayer() {
+  const inp = document.getElementById('admin-add-name');
+  if (!inp || !inp.value.trim()) return;
+  const name = inp.value.trim();
+  if (state.players.find(p => p.name.toLowerCase() === name.toLowerCase())) { showToast('Player already exists.', 'error'); return; }
+  const id = 'p_' + Date.now();
+  state.players.push({ id, name, eastPicks: [], westPicks: [], eastAlive: true, westAlive: true, eastEliminatedDate: null, westEliminatedDate: null, finalsPick: null, finalsGames: null });
+  saveState();
+  render();
+  showToast(name + ' added to pool.', 'success');
+}
+
+function adminRefreshNow() {
+  handleRefresh();
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = msg;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+async function init() {
+  loadState();
+  await fetchPlayoffData();
+  render();
+
+  // Auto-refresh every 5 minutes
+  setInterval(async () => {
+    await fetchPlayoffData();
+    render();
+  }, CONFIG.REFRESH_INTERVAL);
+}
+
+init();
+</script>
+</body>
+</html>
