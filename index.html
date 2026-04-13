@@ -13,7 +13,6 @@
     --border: rgba(255,255,255,0.07);
     --border2: rgba(255,255,255,0.13);
     --accent: #f5a623;
-    --accent2: #e8480a;
     --text: #f0f0f0;
     --text2: #9090a8;
     --text3: #5a5a72;
@@ -24,86 +23,33 @@
     --west: #a855f7;
     --radius: 10px;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Barlow', sans-serif;
-    min-height: 100vh;
-    font-size: 17px;
-  }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; font-size: 17px; }
 
   /* HEADER */
-  .header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .header-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 26px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
+  .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .header-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 26px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); }
   .header-title span { color: var(--text); }
   .header-right { display: flex; align-items: center; gap: 12px; }
-  .player-badge {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 20px;
-    padding: 6px 16px;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-    cursor: pointer;
-  }
-  .btn-admin {
-    background: none;
-    border: 1px solid var(--border2);
-    color: var(--text2);
-    border-radius: var(--radius);
-    padding: 6px 14px;
-    font-size: 14px;
-    font-family: 'Barlow', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  .player-badge { background: var(--surface2); border: 1px solid var(--border2); border-radius: 20px; padding: 6px 16px; font-size: 15px; font-weight: 600; color: var(--text); cursor: pointer; }
+  .btn-admin { background: none; border: 1px solid var(--border2); color: var(--text2); border-radius: var(--radius); padding: 6px 14px; font-size: 14px; font-family: 'Barlow', sans-serif; cursor: pointer; transition: all 0.2s; }
   .btn-admin:hover { border-color: var(--accent); color: var(--accent); }
+  .refresh-btn { background: none; border: 1px solid var(--border2); color: var(--text2); border-radius: 8px; padding: 5px 12px; font-size: 12px; font-family: 'Barlow', sans-serif; cursor: pointer; transition: all 0.15s; }
+  .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* LOADING */
+  .loading-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .loading-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 32px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; }
+  .loading-logo span { color: var(--text); }
+  .loading-sub { font-size: 14px; color: var(--text3); }
+  .big-spinner { width: 36px; height: 36px; border: 3px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
 
   /* MAIN */
   .main { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
 
   /* POT BANNER */
-  .pot-banner {
-    background: linear-gradient(135deg, #1a1206 0%, #1c1226 100%);
-    border: 1px solid rgba(245,166,35,0.25);
-    border-radius: var(--radius);
-    padding: 20px 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  .pot-amount {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 48px;
-    color: var(--accent);
-    line-height: 1;
-  }
+  .pot-banner { background: linear-gradient(135deg, #1a1206 0%, #1c1226 100%); border: 1px solid rgba(245,166,35,0.25); border-radius: var(--radius); padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+  .pot-amount { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 48px; color: var(--accent); line-height: 1; }
   .pot-label { font-size: 14px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
   .pot-stats { display: flex; gap: 32px; flex-wrap: wrap; }
   .pot-stat { text-align: center; }
@@ -111,505 +57,145 @@
   .pot-stat-lbl { font-size: 13px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
   .last-updated { font-size: 13px; color: var(--text3); }
 
-  /* SECTION HEADERS */
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-    margin-top: 28px;
-  }
-  .section-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text2);
-  }
-  .conference-tag {
-    font-size: 13px;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-  }
+  /* SECTION */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; margin-top: 28px; }
+  .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text2); }
+  .conference-tag { font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.07em; }
   .tag-east { background: rgba(59,130,246,0.15); color: var(--east); border: 1px solid rgba(59,130,246,0.3); }
   .tag-west { background: rgba(168,85,247,0.15); color: var(--west); border: 1px solid rgba(168,85,247,0.3); }
 
-  /* STANDINGS GRID */
-  .standings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-  .player-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    transition: border-color 0.2s;
-  }
+  /* STANDINGS */
+  .standings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin-bottom: 8px; }
+  .player-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: border-color 0.2s; }
   .player-card:hover { border-color: var(--border2); }
   .player-card.is-me { border-color: rgba(245,166,35,0.35); }
-  .player-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .player-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .status-pill {
-    font-size: 13px;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
+  .player-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .player-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .status-pill { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em; }
   .pill-alive { background: rgba(34,197,94,0.12); color: var(--alive); border: 1px solid rgba(34,197,94,0.25); }
   .pill-dead { background: rgba(239,68,68,0.12); color: var(--dead); border: 1px solid rgba(239,68,68,0.25); }
   .pill-elim-date { font-size: 12px; color: var(--text3); margin-top: 2px; }
-
-  .conference-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 7px 0;
-    border-top: 1px solid var(--border);
-  }
-  .conf-label {
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    min-width: 40px;
-  }
+  .conference-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-top: 1px solid var(--border); }
+  .conf-label { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; min-width: 40px; }
   .conf-label.east { color: var(--east); }
   .conf-label.west { color: var(--west); }
-  .conf-pick {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-  }
+  .conf-pick { font-size: 15px; font-weight: 500; color: var(--text); }
   .conf-pick.eliminated { color: var(--dead); text-decoration: line-through; }
   .conf-pick.alive { color: var(--alive); }
   .conf-pick.no-pick { color: var(--text3); font-style: italic; }
   .conf-pick.pending { color: var(--locked); }
   .pick-round { font-size: 12px; color: var(--text3); margin-left: 6px; }
+  .used-teams { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .used-team-tag { font-size: 12px; padding: 3px 8px; border-radius: 4px; background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
+  .tiebreaker-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0 2px; border-top: 1px solid var(--border); margin-top: 4px; }
+  .tiebreaker-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); }
+  .tiebreaker-value { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--accent); }
+  .tiebreaker-value.zero { color: var(--text3); }
 
-  /* USED TEAMS */
-  .used-teams {
-    margin-top: 8px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-  .used-team-tag {
-    font-size: 12px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    background: var(--surface2);
-    color: var(--text3);
-    border: 1px solid var(--border);
-  }
-
-  /* SERIES GRID */
-  .series-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 10px;
-    margin-bottom: 8px;
-  }
-  .series-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    position: relative;
-    overflow: hidden;
-  }
-  .series-card.locked::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--locked);
-  }
-  .series-card.complete::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--alive);
-  }
-  .series-round-label {
-    font-size: 12px;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    margin-bottom: 8px;
-  }
-  .series-matchup {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .series-team {
-    flex: 1;
-    text-align: center;
-  }
-  .series-team-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 18px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
+  /* SERIES */
+  .series-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-bottom: 8px; }
+  .series-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; position: relative; overflow: hidden; }
+  .series-card.locked::before,.series-card.complete::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .series-card.locked::before { background: var(--locked); }
+  .series-card.complete::before { background: var(--alive); }
+  .series-round-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+  .series-matchup { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .series-team { flex: 1; text-align: center; }
+  .series-team-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; letter-spacing: 0.04em; }
   .series-team-name.winner { color: var(--alive); }
   .series-team-name.loser { color: var(--text3); text-decoration: line-through; }
   .series-seed { font-size: 12px; color: var(--text3); }
   .series-wins { font-size: 14px; color: var(--text2); margin-top: 2px; }
-  .series-vs {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 15px;
-    color: var(--text3);
-  }
-  .series-status-badge {
-    display: inline-block;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-top: 10px;
-  }
+  .series-vs { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; color: var(--text3); }
+  .series-status-badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 10px; }
   .badge-pre { background: rgba(90,90,114,0.2); color: var(--text3); }
-  .badge-live { background: rgba(239,68,68,0.15); color: var(--dead); }
   .badge-locked { background: rgba(245,158,11,0.15); color: var(--locked); }
   .badge-complete { background: rgba(34,197,94,0.12); color: var(--alive); }
 
   /* PICK PANEL */
-  .pick-panel {
-    background: var(--surface);
-    border: 1px solid rgba(245,166,35,0.3);
-    border-radius: var(--radius);
-    padding: 24px;
-    margin-bottom: 28px;
-  }
-  .pick-panel-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 22px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--accent);
-    margin-bottom: 6px;
-  }
+  .pick-panel { background: var(--surface); border: 1px solid rgba(245,166,35,0.3); border-radius: var(--radius); padding: 24px; margin-bottom: 28px; }
+  .pick-panel-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 6px; }
   .pick-panel-sub { font-size: 15px; color: var(--text2); margin-bottom: 20px; }
   .pick-conference-section { margin-bottom: 20px; }
-  .pick-conf-label {
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 10px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border);
-  }
+  .pick-conf-label { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
   .pick-conf-label.east { color: var(--east); }
   .pick-conf-label.west { color: var(--west); }
-  .pick-teams-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .pick-team-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 8px;
-    padding: 10px 18px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
+  .pick-teams-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pick-team-btn { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 10px 18px; font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 600; color: var(--text); cursor: pointer; transition: all 0.15s; }
   .pick-team-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
   .pick-team-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-  .pick-team-btn.used { opacity: 0.25; cursor: not-allowed; border-style: dashed; }
   .pick-team-btn.selected { background: rgba(245,166,35,0.15); border-color: var(--accent); color: var(--accent); }
   .pick-team-btn.locked-series { opacity: 0.3; cursor: not-allowed; }
-  .pick-already-made {
-    background: rgba(34,197,94,0.08);
-    border: 1px solid rgba(34,197,94,0.2);
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
-    color: var(--alive);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .btn-primary {
-    background: var(--accent);
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 24px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    margin-top: 8px;
-  }
-  .btn-primary:hover { opacity: 0.88; }
-  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
+  .pick-already-made { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--alive); display: flex; align-items: center; gap: 8px; }
 
-  /* FINALS PANEL */
-  .finals-panel {
-    background: linear-gradient(135deg, #0f1a0f 0%, #0f0f1a 100%);
-    border: 1px solid rgba(34,197,94,0.2);
-    border-radius: var(--radius);
-    padding: 20px 24px;
-    margin-bottom: 28px;
-  }
-  .finals-panel-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 18px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--alive);
-    margin-bottom: 4px;
-  }
+  /* FINALS */
+  .finals-panel { background: linear-gradient(135deg, #0f1a0f 0%, #0f0f1a 100%); border: 1px solid rgba(34,197,94,0.2); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 28px; }
+  .finals-panel-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 18px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--alive); margin-bottom: 4px; }
   .finals-panel-sub { font-size: 13px; color: var(--text2); margin-bottom: 16px; }
   .finals-inputs { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
   .finals-field { display: flex; flex-direction: column; gap: 6px; }
   .finals-field label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.07em; }
-  .finals-field select, .finals-field input {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 8px;
-    color: var(--text);
-    padding: 8px 12px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 14px;
-    min-width: 160px;
-  }
+  .finals-field select { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); padding: 8px 12px; font-family: 'Barlow', sans-serif; font-size: 14px; min-width: 160px; }
   .finals-field select option { background: #1c1c26; }
 
-  /* LOGIN SCREEN */
-  .login-screen {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg);
-    padding: 20px;
-  }
-  .login-box {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 16px;
-    padding: 40px;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-  }
-  .login-logo {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 32px;
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 4px;
-  }
+  /* BUTTONS */
+  .btn-primary { background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 10px 24px; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: opacity 0.15s; margin-top: 8px; }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-secondary { background: var(--surface2); border: 1px solid var(--border2); color: var(--text2); border-radius: 8px; padding: 8px 16px; font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .btn-secondary:hover { border-color: var(--text2); color: var(--text); }
+  .btn-danger { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: var(--dead); border-radius: 8px; padding: 8px 16px; font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .btn-danger:hover { background: rgba(239,68,68,0.2); }
+
+  /* LOGIN */
+  .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); padding: 20px; }
+  .login-box { background: var(--surface); border: 1px solid var(--border2); border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; text-align: center; }
+  .login-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 32px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
   .login-logo span { color: var(--text); }
   .login-sub { font-size: 15px; color: var(--text2); margin-bottom: 28px; }
   .login-field { margin-bottom: 14px; text-align: left; }
   .login-field label { display: block; font-size: 13px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
-  .login-field input, .login-field select {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 8px;
-    color: var(--text);
-    padding: 12px 14px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 16px;
-  }
-  .login-field input:focus, .login-field select:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
+  .login-field input, .login-field select { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); padding: 12px 14px; font-family: 'Barlow', sans-serif; font-size: 16px; }
+  .login-field input:focus, .login-field select:focus { outline: none; border-color: var(--accent); }
   .login-field select option { background: #1c1c26; }
-  .login-btn {
-    width: 100%;
-    background: var(--accent);
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    padding: 12px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: opacity 0.15s;
-  }
+  .login-btn { width: 100%; background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 12px; font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; margin-top: 8px; transition: opacity 0.15s; }
   .login-btn:hover { opacity: 0.88; }
+  .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .login-new { margin-top: 12px; }
-  .login-new-btn {
-    background: none;
-    border: 1px solid var(--border2);
-    color: var(--text2);
-    border-radius: 8px;
-    padding: 10px;
-    width: 100%;
-    font-family: 'Barlow', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
+  .login-new-btn { background: none; border: 1px solid var(--border2); color: var(--text2); border-radius: 8px; padding: 10px; width: 100%; font-family: 'Barlow', sans-serif; font-size: 14px; cursor: pointer; transition: all 0.15s; }
   .login-new-btn:hover { border-color: var(--text2); color: var(--text); }
-  .login-error { color: var(--dead); font-size: 13px; margin-top: 10px; }
+  .login-error { color: var(--dead); font-size: 13px; margin-top: 10px; min-height: 20px; }
 
-  /* ADMIN PANEL */
-  .admin-panel {
-    background: var(--surface);
-    border: 1px solid rgba(239,68,68,0.2);
-    border-radius: var(--radius);
-    padding: 20px 24px;
-    margin-bottom: 28px;
-  }
-  .admin-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 16px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--dead);
-    margin-bottom: 16px;
-  }
+  /* ADMIN */
+  .admin-panel { background: var(--surface); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 28px; }
+  .admin-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dead); margin-bottom: 16px; }
   .admin-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
-  .btn-danger {
-    background: rgba(239,68,68,0.1);
-    border: 1px solid rgba(239,68,68,0.3);
-    color: var(--dead);
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .btn-danger:hover { background: rgba(239,68,68,0.2); }
-  .btn-secondary {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    color: var(--text2);
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .btn-secondary:hover { border-color: var(--text2); color: var(--text); }
   .admin-field { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .admin-field input, .admin-field select {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 8px;
-    color: var(--text);
-    padding: 8px 12px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 13px;
-  }
+  .admin-field input { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); padding: 8px 12px; font-family: 'Barlow', sans-serif; font-size: 13px; }
 
   /* MODAL */
-  .modal-overlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.75);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 200;
-    padding: 20px;
-  }
-  .modal-box {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 16px;
-    padding: 28px;
-    width: 100%;
-    max-width: 420px;
-  }
-  .modal-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 16px;
-  }
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 20px; }
+  .modal-box { background: var(--surface); border: 1px solid var(--border2); border-radius: 16px; padding: 28px; width: 100%; max-width: 420px; }
+  .modal-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 20px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
   .modal-field { margin-bottom: 12px; }
   .modal-field label { display: block; font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
-  .modal-field input {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 8px;
-    color: var(--text);
-    padding: 9px 13px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 14px;
-  }
+  .modal-field input { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); padding: 9px 13px; font-family: 'Barlow', sans-serif; font-size: 14px; }
   .modal-field input:focus { outline: none; border-color: var(--accent); }
   .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
   .modal-actions button { flex: 1; }
 
   /* TOAST */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    padding: 12px 18px;
-    font-size: 14px;
-    font-weight: 500;
-    z-index: 300;
-    transform: translateY(80px);
-    opacity: 0;
-    transition: all 0.3s;
-    max-width: 320px;
-  }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; padding: 12px 18px; font-size: 14px; font-weight: 500; z-index: 300; transform: translateY(80px); opacity: 0; transition: all 0.3s; max-width: 320px; }
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast.success { border-color: rgba(34,197,94,0.4); color: var(--alive); }
   .toast.error { border-color: rgba(239,68,68,0.4); color: var(--dead); }
 
-  /* RESPONSIVE */
+  /* MISC */
+  .divider { height: 1px; background: var(--border); margin: 32px 0; }
+  .empty-state { text-align: center; padding: 40px; color: var(--text3); font-size: 14px; }
+  .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   @media (max-width: 600px) {
     .standings-grid { grid-template-columns: 1fr; }
     .series-grid { grid-template-columns: 1fr; }
@@ -617,122 +203,132 @@
     .pick-teams-grid { gap: 6px; }
     .pick-team-btn { padding: 7px 12px; font-size: 12px; }
   }
-
-  .divider { height: 1px; background: var(--border); margin: 32px 0; }
-  .empty-state { text-align: center; padding: 40px; color: var(--text3); font-size: 14px; }
-  .refresh-btn {
-    background: none;
-    border: 1px solid var(--border2);
-    color: var(--text2);
-    border-radius: 8px;
-    padding: 5px 12px;
-    font-size: 12px;
-    font-family: 'Barlow', sans-serif;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .no-series-msg { font-size: 13px; color: var(--text3); padding: 12px 0; }
 </style>
 </head>
 <body>
-
 <div id="app"></div>
 <div class="toast" id="toast"></div>
 
 <script>
 // ============================================================
-// CONFIGURATION — update PROXY_URL after deploying Apps Script
+// CONFIGURATION
 // ============================================================
 const CONFIG = {
-  PROXY_URL: 'https://script.google.com/macros/s/AKfycbyLXb2p97PRkT2yH8TGNdaT_HjobcAEGzIst66cEkocBdt_T4Vlh-pdfYU7oyCEXVyNew/exec', // paste your deployed Apps Script URL
-  ADMIN_PASSWORD: 'playoff2025',           // change this before sharing
+  // PROXY_URL: 'https://script.google.com/macros/s/AKfycby_2oOMaGHt72Id8Uett-G-NAWfVGjYgGouhXD_ntuledvU249LvdcQsgolya_tbwThsg/exec', // ← restore when going live
+  PROXY_URL: '', // demo mode — leave blank to use local demo data
+  ADMIN_PASSWORD: 'playoff2025',  // must match Code.gs ADMIN_PASSWORD
   BUY_IN: 20,
-  REFRESH_INTERVAL: 300000,               // auto-refresh every 5 minutes
-  STORAGE_KEY: 'nba_pool_data_v1'
+  REFRESH_INTERVAL: 300000        // 5 minutes
 };
 
 // ============================================================
 // STATE
 // ============================================================
 let state = {
-  players: [],          // { id, name, eastPicks: [{team, round, date}], westPicks: [{team, round, date}], eastAlive: true, westAlive: true, eastEliminatedDate: null, westEliminatedDate: null, finalsPick: null, finalsGames: null }
-  series: [],           // from ESPN API
+  players: [],
+  series: [],
   rounds: [],
-  currentPlayer: null,  // logged-in player id
+  currentPlayer: null,   // id of logged-in player
+  currentPin: null,       // kept in memory for API calls, never stored
   isAdmin: false,
   lastUpdated: null,
-  apiError: false
+  loading: true,
+  demoMode: false
 };
 
-// ============================================================
-// STORAGE
-// ============================================================
-function saveState() {
-  try {
-    const toSave = { players: state.players, lastUpdated: state.lastUpdated };
-    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(toSave));
-  } catch(e) {}
-}
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem(CONFIG.STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      state.players = parsed.players || [];
-      state.lastUpdated = parsed.lastUpdated || null;
-    }
-  } catch(e) {}
-}
+let selectedPicks = { east: null, west: null };
 
 // ============================================================
-// ESPN API
+// API LAYER — all calls go through here
 // ============================================================
-async function fetchPlayoffData() {
-  if (!CONFIG.PROXY_URL || CONFIG.PROXY_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
-    // Demo mode with sample data
+const DEMO_MODE = !CONFIG.PROXY_URL;
+
+async function apiGet(action) {
+  if (DEMO_MODE) throw new Error('Demo mode — no API.');
+  const res = await fetch(`${CONFIG.PROXY_URL}?action=${action}`);
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || 'API error');
+  return json.data;
+}
+
+async function apiPost(body) {
+  if (DEMO_MODE) throw new Error('Demo mode — no API.');
+  const res = await fetch(CONFIG.PROXY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || 'API error');
+  return json.data;
+}
+
+// ============================================================
+// LOAD STATE (from API or demo)
+// ============================================================
+async function loadState() {
+  if (DEMO_MODE) {
     loadDemoData();
+    state.loading = false;
+    state.demoMode = true;
     return;
   }
   try {
-    const res = await fetch(CONFIG.PROXY_URL + '?action=playoffs');
-    const json = await res.json();
-    if (json.success && json.data) {
-      state.series = json.data.series || [];
-      state.rounds = json.data.rounds || [];
-      state.lastUpdated = new Date().toISOString();
-      autoUpdateEliminations();
-      saveState();
-    } else {
-      state.apiError = true;
-    }
+    const data = await apiGet('getState');
+    state.players    = data.players    || [];
+    state.series     = data.series     || [];
+    state.rounds     = data.rounds     || [];
+    state.lastUpdated = data.lastUpdated || null;
+    autoUpdateEliminations();
   } catch(e) {
-    state.apiError = true;
-    loadDemoData();
+    showToast('Could not connect to server. Check your URL.', 'error');
+  }
+  state.loading = false;
+}
+
+async function refreshState() {
+  if (DEMO_MODE) return; // demo data is static
+  try {
+    const data = await apiGet('getState');
+    state.players    = data.players    || [];
+    state.series     = data.series     || [];
+    state.lastUpdated = data.lastUpdated || null;
+    autoUpdateEliminations();
+  } catch(e) {
+    showToast('Refresh failed.', 'error');
   }
 }
 
+// ============================================================
+// DEMO DATA
+// ============================================================
 function loadDemoData() {
-  // Sample first-round matchups for demo/testing
-  const eastSeries = [
-    { id: 'e1', round: 1, roundName: 'First Round', conference: 'Eastern', status: 'pre', tipped: false, winner: null, teams: [{id:'1',name:'Cleveland Cavaliers',abbrev:'CLE',seed:1,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/cle.png'},{id:'2',name:'Miami Heat',abbrev:'MIA',seed:8,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/mia.png'}] },
-    { id: 'e2', round: 1, roundName: 'First Round', conference: 'Eastern', status: 'pre', tipped: false, winner: null, teams: [{id:'3',name:'Boston Celtics',abbrev:'BOS',seed:2,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/bos.png'},{id:'4',name:'Orlando Magic',abbrev:'ORL',seed:7,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/orl.png'}] },
-    { id: 'e3', round: 1, roundName: 'First Round', conference: 'Eastern', status: 'pre', tipped: false, winner: null, teams: [{id:'5',name:'New York Knicks',abbrev:'NYK',seed:3,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/ny.png'},{id:'6',name:'Detroit Pistons',abbrev:'DET',seed:6,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/det.png'}] },
-    { id: 'e4', round: 1, roundName: 'First Round', conference: 'Eastern', status: 'pre', tipped: false, winner: null, teams: [{id:'7',name:'Indiana Pacers',abbrev:'IND',seed:4,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/ind.png'},{id:'8',name:'Milwaukee Bucks',abbrev:'MIL',seed:5,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/mil.png'}] },
+  state.players = [];
+  // ── RICH DEMO ──────────────────────────────────────────────
+  // Round 1: all 8 series complete with winners
+  // Round 2: all 4 series open (picks available)
+  // EAST R1 winners: CLE(1), ORL(7), NYK(3), MIL(5)
+  // WEST R1 winners: OKC(1), HOU(2), MIN(6), GSW(5)
+  // ──────────────────────────────────────────────────────────
+  state.series = [
+    // EAST R1 (complete)
+    { id:'e1', round:1, roundName:'First Round', conference:'Eastern', status:'post', tipped:true, winner:'Cleveland Cavaliers', endDate:'2025-04-28', teams:[{id:'1',name:'Cleveland Cavaliers',abbrev:'CLE',seed:1,wins:4,logo:'https://a.espncdn.com/i/teamlogos/nba/500/cle.png'},{id:'2',name:'Miami Heat',abbrev:'MIA',seed:8,wins:1,logo:'https://a.espncdn.com/i/teamlogos/nba/500/mia.png'}] },
+    { id:'e2', round:1, roundName:'First Round', conference:'Eastern', status:'post', tipped:true, winner:'Orlando Magic',       endDate:'2025-04-29', teams:[{id:'3',name:'Boston Celtics',abbrev:'BOS',seed:2,wins:2,logo:'https://a.espncdn.com/i/teamlogos/nba/500/bos.png'},{id:'4',name:'Orlando Magic',abbrev:'ORL',seed:7,wins:4,logo:'https://a.espncdn.com/i/teamlogos/nba/500/orl.png'}] },
+    { id:'e3', round:1, roundName:'First Round', conference:'Eastern', status:'post', tipped:true, winner:'New York Knicks',     endDate:'2025-04-27', teams:[{id:'5',name:'New York Knicks',abbrev:'NYK',seed:3,wins:4,logo:'https://a.espncdn.com/i/teamlogos/nba/500/ny.png'},{id:'6',name:'Detroit Pistons',abbrev:'DET',seed:6,wins:2,logo:'https://a.espncdn.com/i/teamlogos/nba/500/det.png'}] },
+    { id:'e4', round:1, roundName:'First Round', conference:'Eastern', status:'post', tipped:true, winner:'Milwaukee Bucks',     endDate:'2025-04-30', teams:[{id:'7',name:'Indiana Pacers',abbrev:'IND',seed:4,wins:3,logo:'https://a.espncdn.com/i/teamlogos/nba/500/ind.png'},{id:'8',name:'Milwaukee Bucks',abbrev:'MIL',seed:5,wins:4,logo:'https://a.espncdn.com/i/teamlogos/nba/500/mil.png'}] },
+    // EAST R2 (picks open)
+    { id:'e5', round:2, roundName:'Second Round', conference:'Eastern', status:'in', tipped:false, winner:null, teams:[{id:'1',name:'Cleveland Cavaliers',abbrev:'CLE',seed:1,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/cle.png'},{id:'4',name:'Orlando Magic',abbrev:'ORL',seed:7,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/orl.png'}] },
+    { id:'e6', round:2, roundName:'Second Round', conference:'Eastern', status:'in', tipped:false, winner:null, teams:[{id:'5',name:'New York Knicks',abbrev:'NYK',seed:3,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/ny.png'},{id:'8',name:'Milwaukee Bucks',abbrev:'MIL',seed:5,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/mil.png'}] },
+    // WEST R1 (complete)
+    { id:'w1', round:1, roundName:'First Round', conference:'Western', status:'post', tipped:true, winner:'Oklahoma City Thunder',    endDate:'2025-04-27', teams:[{id:'11',name:'Oklahoma City Thunder',abbrev:'OKC',seed:1,wins:4,logo:'https://a.espncdn.com/i/teamlogos/nba/500/okc.png'},{id:'12',name:'Memphis Grizzlies',abbrev:'MEM',seed:8,wins:1,logo:'https://a.espncdn.com/i/teamlogos/nba/500/mem.png'}] },
+    { id:'w2', round:1, roundName:'First Round', conference:'Western', status:'post', tipped:true, winner:'Houston Rockets',          endDate:'2025-04-29', teams:[{id:'13',name:'Houston Rockets',abbrev:'HOU',seed:2,wins:4,logo:'https://a.espncdn.com/i/teamlogos/nba/500/hou.png'},{id:'14',name:'Golden State Warriors',abbrev:'GSW',seed:7,wins:3,logo:'https://a.espncdn.com/i/teamlogos/nba/500/gs.png'}] },
+    { id:'w3', round:1, roundName:'First Round', conference:'Western', status:'post', tipped:true, winner:'Minnesota Timberwolves',   endDate:'2025-04-28', teams:[{id:'15',name:'Los Angeles Lakers',abbrev:'LAL',seed:3,wins:2,logo:'https://a.espncdn.com/i/teamlogos/nba/500/lal.png'},{id:'16',name:'Minnesota Timberwolves',abbrev:'MIN',seed:6,wins:4,logo:'https://a.espncdn.com/i/teamlogos/nba/500/min.png'}] },
+    { id:'w4', round:1, roundName:'First Round', conference:'Western', status:'post', tipped:true, winner:'Golden State Warriors',    endDate:'2025-04-30', teams:[{id:'17',name:'Denver Nuggets',abbrev:'DEN',seed:4,wins:2,logo:'https://a.espncdn.com/i/teamlogos/nba/500/den.png'},{id:'18',name:'Golden State Warriors',abbrev:'GSW',seed:5,wins:4,logo:'https://a.espncdn.com/i/teamlogos/nba/500/gs.png'}] },
+    // WEST R2 (picks open)
+    { id:'w5', round:2, roundName:'Second Round', conference:'Western', status:'in', tipped:false, winner:null, teams:[{id:'11',name:'Oklahoma City Thunder',abbrev:'OKC',seed:1,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/okc.png'},{id:'16',name:'Minnesota Timberwolves',abbrev:'MIN',seed:6,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/min.png'}] },
+    { id:'w6', round:2, roundName:'Second Round', conference:'Western', status:'in', tipped:false, winner:null, teams:[{id:'13',name:'Houston Rockets',abbrev:'HOU',seed:2,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/hou.png'},{id:'18',name:'Golden State Warriors',abbrev:'GSW',seed:5,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/gs.png'}] },
   ];
-  const westSeries = [
-    { id: 'w1', round: 1, roundName: 'First Round', conference: 'Western', status: 'pre', tipped: false, winner: null, teams: [{id:'11',name:'Oklahoma City Thunder',abbrev:'OKC',seed:1,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/okc.png'},{id:'12',name:'Memphis Grizzlies',abbrev:'MEM',seed:8,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/mem.png'}] },
-    { id: 'w2', round: 1, roundName: 'First Round', conference: 'Western', status: 'pre', tipped: false, winner: null, teams: [{id:'13',name:'Houston Rockets',abbrev:'HOU',seed:2,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/hou.png'},{id:'14',name:'Golden State Warriors',abbrev:'GSW',seed:7,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/gs.png'}] },
-    { id: 'w3', round: 1, roundName: 'First Round', conference: 'Western', status: 'pre', tipped: false, winner: null, teams: [{id:'15',name:'Los Angeles Lakers',abbrev:'LAL',seed:3,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/lal.png'},{id:'16',name:'Minnesota Timberwolves',abbrev:'MIN',seed:6,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/min.png'}] },
-    { id: 'w4', round: 1, roundName: 'First Round', conference: 'Western', status: 'pre', tipped: false, winner: null, teams: [{id:'17',name:'Denver Nuggets',abbrev:'DEN',seed:4,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/den.png'},{id:'18',name:'Los Angeles Clippers',abbrev:'LAC',seed:5,wins:0,logo:'https://a.espncdn.com/i/teamlogos/nba/500/lac.png'}] },
-  ];
-  state.series = [...eastSeries, ...westSeries];
   state.lastUpdated = new Date().toISOString();
-  state.apiError = false;
 }
 
 // ============================================================
@@ -743,38 +339,26 @@ function getConferenceSeries(conf) {
 }
 
 function getCurrentRound(conf) {
-  const confSeries = getConferenceSeries(conf);
-  // Find the lowest round number that has at least one non-complete series
-  const active = confSeries.filter(s => s.status !== 'post');
-  if (active.length === 0) return null;
+  const active = getConferenceSeries(conf).filter(s => s.status !== 'post');
+  if (!active.length) return null;
   return Math.min(...active.map(s => s.round));
 }
 
 function getPickableTeams(conf, playerId) {
   const player = state.players.find(p => p.id === playerId);
   if (!player) return [];
-
-  const usedTeams = conf === 'east'
-    ? (player.eastPicks || []).map(p => p.team)
-    : (player.westPicks || []).map(p => p.team);
-
+  const usedTeams = (conf === 'east' ? player.eastPicks : player.westPicks || []).map(p => p.team);
   const currentRound = getCurrentRound(conf);
   if (!currentRound) return [];
-
-  const roundSeries = getConferenceSeries(conf).filter(s => s.round === currentRound && s.status !== 'post');
-  const availableTeams = [];
-
-  roundSeries.forEach(series => {
+  const result = [];
+  getConferenceSeries(conf).filter(s => s.round === currentRound && s.status !== 'post').forEach(series => {
     series.teams.forEach(team => {
-      if (!series.tipped && !usedTeams.includes(team.name)) {
-        availableTeams.push({ ...team, seriesId: series.id, locked: false });
-      } else if (series.tipped && !usedTeams.includes(team.name)) {
-        availableTeams.push({ ...team, seriesId: series.id, locked: true });
+      if (!usedTeams.includes(team.name)) {
+        result.push({ ...team, seriesId: series.id, locked: series.tipped });
       }
     });
   });
-
-  return availableTeams;
+  return result;
 }
 
 function getPlayerCurrentPick(conf, playerId) {
@@ -789,21 +373,18 @@ function getPlayerCurrentPick(conf, playerId) {
 function getAllUsedTeams(conf, playerId) {
   const player = state.players.find(p => p.id === playerId);
   if (!player) return [];
-  const picks = conf === 'east' ? (player.eastPicks || []) : (player.westPicks || []);
-  return picks.map(p => p.team);
+  return (conf === 'east' ? (player.eastPicks || []) : (player.westPicks || [])).map(p => p.team);
 }
 
 function autoUpdateEliminations() {
-  // Check each series result and eliminate players whose picks lost
   state.series.forEach(series => {
     if (series.status === 'post' && series.winner) {
       const losingTeams = series.teams.filter(t => t.name !== series.winner).map(t => t.name);
       const conf = series.conference.toLowerCase().includes('east') ? 'east' : 'west';
-
       state.players.forEach(player => {
         const picks = conf === 'east' ? (player.eastPicks || []) : (player.westPicks || []);
-        const thisRoundPick = picks.find(p => p.round === series.round);
-        if (thisRoundPick && losingTeams.includes(thisRoundPick.team)) {
+        const pick = picks.find(p => p.round === series.round);
+        if (pick && losingTeams.includes(pick.team)) {
           if (conf === 'east' && player.eastAlive) {
             player.eastAlive = false;
             player.eastEliminatedDate = series.endDate || new Date().toISOString().split('T')[0];
@@ -819,27 +400,43 @@ function autoUpdateEliminations() {
 }
 
 function isFinalsTime() {
-  const confFinalsSeries = state.series.filter(s => s.round === 4);
-  return confFinalsSeries.some(s => s.status === 'post') || state.series.some(s => s.round === 5);
+  return state.series.some(s => s.round === 4 && s.status === 'post') || state.series.some(s => s.round === 5);
+}
+
+function calcTiebreakerTotal(player) {
+  let total = 0;
+  const checkPicks = (picks, conf) => {
+    (picks || []).forEach(pick => {
+      const series = state.series.find(s =>
+        s.conference && s.conference.toLowerCase().includes(conf.toLowerCase()) &&
+        s.round === pick.round &&
+        s.teams && s.teams.some(t => t.name === pick.team)
+      );
+      if (!series || series.status !== 'post' || !series.winner) return;
+      if (series.winner === pick.team) {
+        const teamObj = series.teams.find(t => t.name === pick.team);
+        total += teamObj ? (parseInt(teamObj.seed) || 0) : 0;
+      }
+    });
+  };
+  checkPicks(player.eastPicks, 'east');
+  checkPicks(player.westPicks, 'west');
+  return total;
 }
 
 function getStandings() {
   return state.players.map(p => {
-    const eastAlive = p.eastAlive;
-    const westAlive = p.westAlive;
-    const holdsBoth = eastAlive && westAlive;
-    const holdsOne = (eastAlive || westAlive) && !holdsBoth;
-    const eliminated = !eastAlive && !westAlive;
-
+    const holdsBoth = p.eastAlive && p.westAlive;
+    const holdsOne  = (p.eastAlive || p.westAlive) && !holdsBoth;
+    const eliminated = !p.eastAlive && !p.westAlive;
     let lastSurvived = null;
     if (eliminated) {
-      const d1 = p.eastEliminatedDate;
-      const d2 = p.westEliminatedDate;
+      const d1 = p.eastEliminatedDate, d2 = p.westEliminatedDate;
       if (d1 && d2) lastSurvived = d1 > d2 ? d1 : d2;
       else lastSurvived = d1 || d2;
     }
-
-    return { ...p, holdsBoth, holdsOne, eliminated, lastSurvived };
+    const tiebreakerTotal = calcTiebreakerTotal(p);
+    return { ...p, holdsBoth, holdsOne, eliminated, lastSurvived, tiebreakerTotal };
   }).sort((a, b) => {
     if (a.holdsBoth && !b.holdsBoth) return -1;
     if (!a.holdsBoth && b.holdsBoth) return 1;
@@ -849,32 +446,20 @@ function getStandings() {
   });
 }
 
-// Returns true if picks for this conference's current round should be publicly visible.
-// Revealed when: all alive players have picked OR no untipped series remain (deadline forced).
 function isRoundRevealed(conf) {
   const currentRound = getCurrentRound(conf);
-  if (!currentRound) return true; // no active round — nothing to hide
-
-  // If any series in this round is complete, reveal (round is effectively over)
+  if (!currentRound) return true;
   const roundSeries = getConferenceSeries(conf).filter(s => s.round === currentRound);
   if (roundSeries.every(s => s.status === 'post')) return true;
-
-  // If no untipped series remain, deadline has been forced — reveal
-  const anyUntipped = roundSeries.some(s => !s.tipped);
-  if (!anyUntipped) return true;
-
-  // Check if all alive players have submitted a pick for this round
+  if (!roundSeries.some(s => !s.tipped)) return true;
   const alivePlayers = state.players.filter(p => conf === 'east' ? p.eastAlive : p.westAlive);
-  if (alivePlayers.length === 0) return true;
-  const allPicked = alivePlayers.every(p => {
+  if (!alivePlayers.length) return true;
+  return alivePlayers.every(p => {
     const picks = conf === 'east' ? (p.eastPicks || []) : (p.westPicks || []);
     return picks.some(pk => pk.round === currentRound);
   });
-
-  return allPicked;
 }
 
-// Returns pick counts for a conference's current round: { picked, total }
 function getRoundPickCounts(conf) {
   const currentRound = getCurrentRound(conf);
   if (!currentRound) return { picked: 0, total: 0 };
@@ -886,33 +471,64 @@ function getRoundPickCounts(conf) {
   return { picked, total: alivePlayers.length };
 }
 
-function submitPick(conf, teamName, round) {
+// ============================================================
+// SUBMIT ACTIONS
+// ============================================================
+async function submitPick(conf, teamName, round) {
   const player = state.players.find(p => p.id === state.currentPlayer);
   if (!player) return false;
 
-  const picks = conf === 'east' ? (player.eastPicks = player.eastPicks || []) : (player.westPicks = player.westPicks || []);
-  const existing = picks.find(p => p.round === round);
-  if (existing) return false; // already picked this round
+  if (DEMO_MODE) {
+    // In demo mode, just mutate local state
+    const picks = conf === 'east' ? (player.eastPicks = player.eastPicks || []) : (player.westPicks = player.westPicks || []);
+    if (picks.find(p => p.round === round)) return false;
+    picks.push({ team: teamName, round, date: new Date().toISOString() });
+    return true;
+  }
 
-  picks.push({ team: teamName, round, date: new Date().toISOString() });
-  saveState();
-  return true;
+  try {
+    await apiPost({ action: 'submitPick', playerId: player.id, pin: state.currentPin, conference: conf, team: teamName, round });
+    // Optimistically update local state
+    const picks = conf === 'east' ? (player.eastPicks = player.eastPicks || []) : (player.westPicks = player.westPicks || []);
+    picks.push({ team: teamName, round, date: new Date().toISOString() });
+    return true;
+  } catch(e) {
+    showToast(e.message || 'Could not submit pick.', 'error');
+    return false;
+  }
 }
 
-function submitFinalsPick(champion, games) {
+async function submitFinalsPick(champion, games) {
   const player = state.players.find(p => p.id === state.currentPlayer);
-  if (!player) return false;
-  player.finalsPick = champion;
+  if (!player) return;
+
+  player.finalsPick  = champion;
   player.finalsGames = parseInt(games);
-  saveState();
-  return true;
+
+  if (!DEMO_MODE) {
+    try {
+      await apiPost({ action: 'submitFinalsPick', playerId: player.id, pin: state.currentPin, finalsPick: champion, finalsGames: parseInt(games) });
+    } catch(e) {
+      showToast(e.message || 'Could not submit finals pick.', 'error');
+    }
+  }
 }
 
 // ============================================================
-// RENDER
+// RENDER SYSTEM
 // ============================================================
 function render() {
   const app = document.getElementById('app');
+
+  if (state.loading) {
+    app.innerHTML = `
+      <div class="loading-screen">
+        <div class="loading-logo">NBA <span>Pool</span></div>
+        <div class="big-spinner"></div>
+        <div class="loading-sub">Loading pool data…</div>
+      </div>`;
+    return;
+  }
 
   if (!state.currentPlayer) {
     app.innerHTML = renderLogin();
@@ -924,6 +540,7 @@ function render() {
   app.innerHTML = `
     ${renderHeader(player)}
     <div class="main">
+      ${state.demoMode ? `<div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:8px;padding:10px 16px;margin-bottom:20px;font-size:13px;color:var(--accent);">⚡ Demo mode — picks are local only and not saved between sessions.</div>` : ''}
       ${state.isAdmin ? renderAdminPanel() : ''}
       ${renderPotBanner()}
       ${renderPickPanel()}
@@ -942,38 +559,37 @@ function renderLogin() {
     <div class="login-screen">
       <div class="login-box">
         <div class="login-logo">NBA <span>Pool</span></div>
-        <div class="login-sub">2025 Playoff Survivor Pool</div>
-
+        <div class="login-sub">2025 Playoff Survivor Pool${state.demoMode ? ' · Demo Mode' : ''}</div>
         ${hasPlayers ? `
-        <div class="login-field">
-          <label>Select your name</label>
-          <select id="login-select">
-            <option value="">— choose —</option>
-            ${state.players.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
-          </select>
-        </div>
-        <div class="login-field">
-          <label>Your 4-digit PIN</label>
-          <input type="password" inputmode="numeric" maxlength="4" id="login-pin" placeholder="••••" />
-        </div>
-        <button class="login-btn" onclick="handleLogin()">Enter Pool →</button>
-        <div class="login-new">
-          <button class="login-new-btn" onclick="showNewPlayer()">New player? Join here</button>
-        </div>
+          <div class="login-field">
+            <label>Select your name</label>
+            <select id="login-select">
+              <option value="">— choose —</option>
+              ${state.players.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+            </select>
+          </div>
+          <div class="login-field">
+            <label>Your 4-digit PIN</label>
+            <input type="password" inputmode="numeric" maxlength="4" id="login-pin" placeholder="••••" />
+          </div>
+          <button class="login-btn" onclick="handleLogin()">Enter Pool →</button>
+          <div class="login-new">
+            <button class="login-new-btn" onclick="showNewPlayer()">New player? Join here</button>
+          </div>
         ` : `
-        <div class="login-field">
-          <label>Your name</label>
-          <input type="text" id="new-player-name" placeholder="Enter your name" />
-        </div>
-        <div class="login-field">
-          <label>Choose a 4-digit PIN</label>
-          <input type="password" inputmode="numeric" maxlength="4" id="new-player-pin" placeholder="e.g. 1234" />
-        </div>
-        <div class="login-field">
-          <label>Confirm PIN</label>
-          <input type="password" inputmode="numeric" maxlength="4" id="new-player-pin2" placeholder="Re-enter PIN" />
-        </div>
-        <button class="login-btn" onclick="handleNewPlayer()">Join Pool →</button>
+          <div class="login-field">
+            <label>Your name</label>
+            <input type="text" id="new-player-name" placeholder="Enter your name" autofocus />
+          </div>
+          <div class="login-field">
+            <label>Choose a 4-digit PIN</label>
+            <input type="password" inputmode="numeric" maxlength="4" id="new-player-pin" placeholder="e.g. 1234" />
+          </div>
+          <div class="login-field">
+            <label>Confirm PIN</label>
+            <input type="password" inputmode="numeric" maxlength="4" id="new-player-pin2" placeholder="Re-enter PIN" />
+          </div>
+          <button class="login-btn" id="join-btn" onclick="handleNewPlayer()">Join Pool →</button>
         `}
         <div style="margin-top:16px;">
           <button class="btn-admin" onclick="showAdminLogin()">Commissioner login</button>
@@ -981,28 +597,27 @@ function renderLogin() {
         <div class="login-error" id="login-error"></div>
       </div>
     </div>
-    ${renderAdminModal()}
-  `;
+    ${renderAdminModal()}`;
 }
 
 function renderHeader(player) {
+  const updated = state.lastUpdated ? new Date(state.lastUpdated).toLocaleTimeString() : '—';
   return `
     <div class="header">
       <div class="header-title">NBA <span>Pool</span></div>
       <div class="header-right">
-        <div class="player-badge" onclick="handleLogout()">
-          ${player ? player.name : ''} &nbsp;✕
-        </div>
-        ${!state.isAdmin ? `<button class="btn-admin" onclick="showAdminLogin()">Admin</button>` : `<button class="btn-admin" style="color:var(--dead)" onclick="state.isAdmin=false;render()">Exit Admin</button>`}
+        <div class="player-badge" onclick="handleLogout()">${player ? player.name : ''} &nbsp;✕</div>
+        ${!state.isAdmin
+          ? `<button class="btn-admin" onclick="showAdminLogin()">Admin</button>`
+          : `<button class="btn-admin" style="color:var(--dead)" onclick="state.isAdmin=false;render()">Exit Admin</button>`}
         <button class="refresh-btn" onclick="handleRefresh()" id="refresh-btn">↻ Refresh</button>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
 function renderPotBanner() {
-  const total = state.players.length * CONFIG.BUY_IN;
-  const alive = state.players.filter(p => p.eastAlive || p.westAlive).length;
+  const total   = state.players.length * CONFIG.BUY_IN;
+  const alive   = state.players.filter(p => p.eastAlive || p.westAlive).length;
   const updated = state.lastUpdated ? new Date(state.lastUpdated).toLocaleTimeString() : 'Never';
   return `
     <div class="pot-banner">
@@ -1011,133 +626,77 @@ function renderPotBanner() {
         <div class="pot-amount">$${total}</div>
       </div>
       <div class="pot-stats">
-        <div class="pot-stat">
-          <div class="pot-stat-val" style="color:var(--alive)">${alive}</div>
-          <div class="pot-stat-lbl">Still alive</div>
-        </div>
-        <div class="pot-stat">
-          <div class="pot-stat-val">${state.players.length}</div>
-          <div class="pot-stat-lbl">Players</div>
-        </div>
-        <div class="pot-stat">
-          <div class="pot-stat-val" style="color:var(--accent)">$${CONFIG.BUY_IN}</div>
-          <div class="pot-stat-lbl">Buy-in</div>
-        </div>
+        <div class="pot-stat"><div class="pot-stat-val" style="color:var(--alive)">${alive}</div><div class="pot-stat-lbl">Still alive</div></div>
+        <div class="pot-stat"><div class="pot-stat-val">${state.players.length}</div><div class="pot-stat-lbl">Players</div></div>
+        <div class="pot-stat"><div class="pot-stat-val" style="color:var(--accent)">$${CONFIG.BUY_IN}</div><div class="pot-stat-lbl">Buy-in</div></div>
       </div>
-      <div class="last-updated">Last updated: ${updated} ${state.apiError ? '⚠ Demo mode' : ''}</div>
-    </div>
-  `;
+      <div class="last-updated">Last updated: ${updated}</div>
+    </div>`;
 }
 
 function renderPickPanel() {
   const player = state.players.find(p => p.id === state.currentPlayer);
   if (!player) return '';
-
-  const eastAlive = player.eastAlive;
-  const westAlive = player.westAlive;
-
-  if (!eastAlive && !westAlive) {
+  if (!player.eastAlive && !player.westAlive) {
     return `<div class="pick-panel" style="border-color:rgba(239,68,68,0.2)">
       <div class="pick-panel-title" style="color:var(--dead)">You've Been Eliminated</div>
       <div class="pick-panel-sub">Both your East and West picks have been knocked out. Better luck next year.</div>
     </div>`;
   }
 
-  let eastSection = '';
-  let westSection = '';
+  const mkSection = (conf) => {
+    if (!(conf === 'east' ? player.eastAlive : player.westAlive)) return '';
+    const currentRound  = getCurrentRound(conf);
+    const existingPick  = getPlayerCurrentPick(conf, player.id);
+    const pickable      = getPickableTeams(conf, player.id);
+    const usedTeams     = getAllUsedTeams(conf, player.id);
+    const label         = conf === 'east' ? 'East' : 'West';
 
-  if (eastAlive) {
-    const currentRound = getCurrentRound('east');
-    const existingPick = getPlayerCurrentPick('east', player.id);
-    const pickable = getPickableTeams('east', player.id);
-    const usedTeams = getAllUsedTeams('east', player.id);
+    if (existingPick) return `
+      <div class="pick-conference-section">
+        <div class="pick-conf-label ${conf}">${label} — Round ${currentRound || '?'}</div>
+        <div class="pick-already-made">✓ Picked: <strong>${existingPick.team}</strong></div>
+        ${usedTeams.length > 1 ? `<div class="used-teams">${usedTeams.map(t=>`<span class="used-team-tag">${t}</span>`).join('')}</div>` : ''}
+      </div>`;
 
-    if (existingPick) {
-      eastSection = `
-        <div class="pick-conference-section">
-          <div class="pick-conf-label east">East — Round ${currentRound || '?'}</div>
-          <div class="pick-already-made">✓ Picked: <strong>${existingPick.team}</strong></div>
-          ${usedTeams.length > 1 ? `<div class="used-teams">${usedTeams.map(t => `<span class="used-team-tag">${t}</span>`).join('')}</div>` : ''}
-        </div>`;
-    } else if (currentRound) {
-      eastSection = `
-        <div class="pick-conference-section">
-          <div class="pick-conf-label east">East — Round ${currentRound} Pick</div>
-          <div class="pick-teams-grid" id="east-pick-grid">
-            ${pickable.length === 0 ? '<div style="color:var(--text3);font-size:13px;">No available teams — all series have tipped or teams already used.</div>' : ''}
-            ${pickable.map(t => `
-              <button class="pick-team-btn${t.locked ? ' locked-series' : ''}" 
-                data-team="${t.name}" data-conf="east" data-round="${currentRound}"
-                ${t.locked ? 'disabled title="Series already started"' : ''}
-                onclick="handlePickSelect(this,'east')">
-                ${t.abbrev || t.name}${t.seed ? ` <span style="opacity:0.5;font-size:11px;">#${t.seed}</span>` : ''}
-              </button>`).join('')}
-          </div>
-          ${usedTeams.length > 0 ? `<div class="used-teams" style="margin-top:10px">${usedTeams.map(t=>`<span class="used-team-tag">${t}</span>`).join('')}</div>` : ''}
-          <button class="btn-primary" id="east-submit-btn" disabled onclick="handleSubmitPick('east')">Lock East Pick</button>
-        </div>`;
-    } else {
-      eastSection = `<div class="pick-conference-section"><div class="pick-conf-label east">East</div><div style="font-size:13px;color:var(--text3)">No active round yet.</div></div>`;
-    }
-  }
+    if (currentRound) return `
+      <div class="pick-conference-section">
+        <div class="pick-conf-label ${conf}">${label} — Round ${currentRound} Pick</div>
+        <div class="pick-teams-grid" id="${conf}-pick-grid">
+          ${pickable.length === 0 ? `<div style="color:var(--text3);font-size:13px;">No available teams — all series have tipped or teams already used.</div>` : ''}
+          ${pickable.map(t => `
+            <button class="pick-team-btn${t.locked ? ' locked-series' : ''}"
+              data-team="${t.name}" data-conf="${conf}" data-round="${currentRound}"
+              ${t.locked ? 'disabled title="Series already started"' : ''}
+              onclick="handlePickSelect(this,'${conf}')">
+              ${t.abbrev || t.name}${t.seed ? ` <span style="opacity:0.5;font-size:11px;">#${t.seed}</span>` : ''}
+            </button>`).join('')}
+        </div>
+        ${usedTeams.length > 0 ? `<div class="used-teams" style="margin-top:10px">${usedTeams.map(t=>`<span class="used-team-tag">${t}</span>`).join('')}</div>` : ''}
+        <button class="btn-primary" id="${conf}-submit-btn" disabled onclick="handleSubmitPick('${conf}')">Lock ${label} Pick</button>
+      </div>`;
 
-  if (westAlive) {
-    const currentRound = getCurrentRound('west');
-    const existingPick = getPlayerCurrentPick('west', player.id);
-    const pickable = getPickableTeams('west', player.id);
-    const usedTeams = getAllUsedTeams('west', player.id);
+    return `<div class="pick-conference-section"><div class="pick-conf-label ${conf}">${label}</div><div style="font-size:13px;color:var(--text3)">No active round yet.</div></div>`;
+  };
 
-    if (existingPick) {
-      westSection = `
-        <div class="pick-conference-section">
-          <div class="pick-conf-label west">West — Round ${currentRound || '?'}</div>
-          <div class="pick-already-made">✓ Picked: <strong>${existingPick.team}</strong></div>
-          ${usedTeams.length > 1 ? `<div class="used-teams">${usedTeams.map(t => `<span class="used-team-tag">${t}</span>`).join('')}</div>` : ''}
-        </div>`;
-    } else if (currentRound) {
-      westSection = `
-        <div class="pick-conference-section">
-          <div class="pick-conf-label west">West — Round ${currentRound} Pick</div>
-          <div class="pick-teams-grid" id="west-pick-grid">
-            ${pickable.length === 0 ? '<div style="color:var(--text3);font-size:13px;">No available teams — all series have tipped or teams already used.</div>' : ''}
-            ${pickable.map(t => `
-              <button class="pick-team-btn${t.locked ? ' locked-series' : ''}"
-                data-team="${t.name}" data-conf="west" data-round="${currentRound}"
-                ${t.locked ? 'disabled title="Series already started"' : ''}
-                onclick="handlePickSelect(this,'west')">
-                ${t.abbrev || t.name}${t.seed ? ` <span style="opacity:0.5;font-size:11px;">#${t.seed}</span>` : ''}
-              </button>`).join('')}
-          </div>
-          ${usedTeams.length > 0 ? `<div class="used-teams" style="margin-top:10px">${usedTeams.map(t=>`<span class="used-team-tag">${t}</span>`).join('')}</div>` : ''}
-          <button class="btn-primary" id="west-submit-btn" disabled onclick="handleSubmitPick('west')">Lock West Pick</button>
-        </div>`;
-    } else {
-      westSection = `<div class="pick-conference-section"><div class="pick-conf-label west">West</div><div style="font-size:13px;color:var(--text3)">No active round yet.</div></div>`;
-    }
-  }
-
-  return `
-    <div class="pick-panel">
-      <div class="pick-panel-title">Make Your Picks</div>
-      <div class="pick-panel-sub">Select a team to survive into the next round. You cannot reuse a team.</div>
-      ${eastSection}
-      ${westSection}
-    </div>`;
+  return `<div class="pick-panel">
+    <div class="pick-panel-title">Make Your Picks</div>
+    <div class="pick-panel-sub">Select a team to survive into the next round. You cannot reuse a team.</div>
+    ${mkSection('east')}
+    ${mkSection('west')}
+  </div>`;
 }
 
 function renderFinalsPanel() {
   if (!isFinalsTime()) return '';
   const player = state.players.find(p => p.id === state.currentPlayer);
   if (!player || (!player.eastAlive && !player.westAlive)) return '';
-  if (player.finalsPick) {
-    return `<div class="finals-panel">
+  if (player.finalsPick) return `
+    <div class="finals-panel">
       <div class="finals-panel-title">Finals Picks Submitted</div>
       <div class="finals-panel-sub">Champion: <strong>${player.finalsPick}</strong> &nbsp;·&nbsp; Games: <strong>${player.finalsGames}</strong></div>
     </div>`;
-  }
-
   const finalists = state.series.filter(s => s.round === 4 && s.status === 'post' && s.winner).map(s => s.winner);
-
   return `<div class="finals-panel">
     <div class="finals-panel-title">Finals Tiebreaker Picks</div>
     <div class="finals-panel-sub">Submit your Finals picks — used only as tiebreakers. Must be exact.</div>
@@ -1146,17 +705,14 @@ function renderFinalsPanel() {
         <label>NBA Champion</label>
         <select id="finals-champ">
           <option value="">— select —</option>
-          ${finalists.map(t => `<option value="${t}">${t}</option>`).join('')}
+          ${finalists.map(t=>`<option value="${t}">${t}</option>`).join('')}
         </select>
       </div>
       <div class="finals-field">
         <label>Number of games</label>
         <select id="finals-games">
           <option value="">—</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
+          <option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option>
         </select>
       </div>
       <button class="btn-primary" onclick="handleFinalsPick()">Submit Finals Picks</button>
@@ -1166,45 +722,33 @@ function renderFinalsPanel() {
 
 function renderStandings() {
   const standings = getStandings();
-  if (standings.length === 0) return `<div class="empty-state">No players yet. Be the first to join!</div>`;
+  if (!standings.length) return `<div class="empty-state">No players yet. Be the first to join!</div>`;
 
   const eastRevealed = isRoundRevealed('east');
   const westRevealed = isRoundRevealed('west');
-  const eastCounts = getRoundPickCounts('east');
-  const westCounts = getRoundPickCounts('west');
-
+  const eastCounts   = getRoundPickCounts('east');
+  const westCounts   = getRoundPickCounts('west');
   const banners = [];
 
-  if (!eastRevealed && eastCounts.total > 0) {
-    banners.push(`
-      <div style="display:flex;align-items:center;gap:10px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:13px;">
-        <span>🔒</span>
-        <span style="color:var(--east);font-weight:600;">East picks hidden</span>
-        <span style="color:var(--text2);margin-left:auto;">${eastCounts.picked} of ${eastCounts.total} players have picked</span>
-      </div>`);
-  }
+  if (!eastRevealed && eastCounts.total > 0) banners.push(`
+    <div style="display:flex;align-items:center;gap:10px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:13px;">
+      <span>🔒</span><span style="color:var(--east);font-weight:600;">East picks hidden</span>
+      <span style="color:var(--text2);margin-left:auto;">${eastCounts.picked} of ${eastCounts.total} players have picked</span>
+    </div>`);
 
-  if (!westRevealed && westCounts.total > 0) {
-    banners.push(`
-      <div style="display:flex;align-items:center;gap:10px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:13px;">
-        <span>🔒</span>
-        <span style="color:var(--west);font-weight:600;">West picks hidden</span>
-        <span style="color:var(--text2);margin-left:auto;">${westCounts.picked} of ${westCounts.total} players have picked</span>
-      </div>`);
-  }
+  if (!westRevealed && westCounts.total > 0) banners.push(`
+    <div style="display:flex;align-items:center;gap:10px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:13px;">
+      <span>🔒</span><span style="color:var(--west);font-weight:600;">West picks hidden</span>
+      <span style="color:var(--text2);margin-left:auto;">${westCounts.picked} of ${westCounts.total} players have picked</span>
+    </div>`);
 
-  if (eastRevealed && westRevealed && (eastCounts.total > 0 || westCounts.total > 0)) {
-    banners.push(`
-      <div style="display:flex;align-items:center;gap:10px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:13px;">
-        <span>🎉</span>
-        <span style="color:var(--alive);font-weight:600;">All picks are in — round revealed!</span>
-      </div>`);
-  }
+  if (eastRevealed && westRevealed && (eastCounts.total > 0 || westCounts.total > 0)) banners.push(`
+    <div style="display:flex;align-items:center;gap:10px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:13px;">
+      <span>🎉</span><span style="color:var(--alive);font-weight:600;">All picks are in — round revealed!</span>
+    </div>`);
 
   return `
-    <div class="section-header">
-      <div class="section-title">Standings</div>
-    </div>
+    <div class="section-header"><div class="section-title">Standings</div></div>
     ${banners.join('')}
     <div class="standings-grid">
       ${standings.map(p => renderPlayerCard(p, eastRevealed, westRevealed)).join('')}
@@ -1213,12 +757,10 @@ function renderStandings() {
 
 function renderPlayerCard(p, eastRevealed, westRevealed) {
   const isMe = p.id === state.currentPlayer;
-  const eastPicks = p.eastPicks || [];
-  const westPicks = p.westPicks || [];
+  const eastPicks = p.eastPicks || [], westPicks = p.westPicks || [];
   const currentEastRound = getCurrentRound('east');
   const currentWestRound = getCurrentRound('west');
 
-  // Latest pick = current round pick (may be hidden); previous picks always shown
   const latestEast = eastPicks.find(pk => pk.round === currentEastRound) || eastPicks[eastPicks.length - 1];
   const latestWest = westPicks.find(pk => pk.round === currentWestRound) || westPicks[westPicks.length - 1];
   const prevEastPicks = eastPicks.filter(pk => pk.round !== currentEastRound);
@@ -1227,36 +769,19 @@ function renderPlayerCard(p, eastRevealed, westRevealed) {
   const eastStatus = p.eastAlive ? 'alive' : 'eliminated';
   const westStatus = p.westAlive ? 'alive' : 'eliminated';
 
-  // Determine what to show for east current pick
   const showEastTeam = eastRevealed || isMe;
-  let eastPickDisplay = '';
-  if (latestEast && latestEast.round === currentEastRound) {
-    if (showEastTeam) {
-      eastPickDisplay = `<span class="conf-pick ${eastStatus}">${latestEast.team} <span class="pick-round">Rd ${latestEast.round}</span></span>`;
-    } else {
-      eastPickDisplay = `<span class="conf-pick pending" style="font-size:12px;">✓ Pick submitted</span>`;
-    }
-  } else if (latestEast) {
-    // Showing a prior round's pick (current round not yet picked or eliminated)
-    eastPickDisplay = `<span class="conf-pick ${eastStatus}">${latestEast.team} <span class="pick-round">Rd ${latestEast.round}</span></span>`;
-  } else {
-    eastPickDisplay = `<span class="conf-pick no-pick">No pick yet</span>`;
-  }
-
-  // Determine what to show for west current pick
   const showWestTeam = westRevealed || isMe;
-  let westPickDisplay = '';
-  if (latestWest && latestWest.round === currentWestRound) {
-    if (showWestTeam) {
-      westPickDisplay = `<span class="conf-pick ${westStatus}">${latestWest.team} <span class="pick-round">Rd ${latestWest.round}</span></span>`;
-    } else {
-      westPickDisplay = `<span class="conf-pick pending" style="font-size:12px;">✓ Pick submitted</span>`;
+
+  const mkPickDisplay = (latest, currentRound, status, showTeam) => {
+    if (latest && latest.round === currentRound) {
+      return showTeam
+        ? `<span class="conf-pick ${status}">${latest.team} <span class="pick-round">Rd ${latest.round}</span></span>`
+        : `<span class="conf-pick pending" style="font-size:12px;">✓ Pick submitted</span>`;
+    } else if (latest) {
+      return `<span class="conf-pick ${status}">${latest.team} <span class="pick-round">Rd ${latest.round}</span></span>`;
     }
-  } else if (latestWest) {
-    westPickDisplay = `<span class="conf-pick ${westStatus}">${latestWest.team} <span class="pick-round">Rd ${latestWest.round}</span></span>`;
-  } else {
-    westPickDisplay = `<span class="conf-pick no-pick">No pick yet</span>`;
-  }
+    return `<span class="conf-pick no-pick">No pick yet</span>`;
+  };
 
   return `<div class="player-card${isMe ? ' is-me' : ''}">
     <div class="player-card-header">
@@ -1270,88 +795,79 @@ function renderPlayerCard(p, eastRevealed, westRevealed) {
     </div>
     <div class="conference-row">
       <span class="conf-label east">EAST</span>
-      ${eastPickDisplay}
+      ${mkPickDisplay(latestEast, currentEastRound, eastStatus, showEastTeam)}
     </div>
     <div class="conference-row">
       <span class="conf-label west">WEST</span>
-      ${westPickDisplay}
+      ${mkPickDisplay(latestWest, currentWestRound, westStatus, showWestTeam)}
     </div>
     ${(prevEastPicks.length > 0 || prevWestPicks.length > 0) ? `
     <div class="used-teams" style="margin-top:10px">
       ${[...prevEastPicks.map(pp=>`<span class="used-team-tag" style="color:var(--east);border-color:rgba(59,130,246,0.2)">${pp.team}</span>`),
          ...prevWestPicks.map(pp=>`<span class="used-team-tag" style="color:var(--west);border-color:rgba(168,85,247,0.2)">${pp.team}</span>`)].join('')}
     </div>` : ''}
-    ${p.finalsPick && (eastRevealed && westRevealed) ? `<div style="font-size:11px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">Finals: ${p.finalsPick} in ${p.finalsGames}</div>` : ''}
+    ${p.finalsPick && eastRevealed && westRevealed ? `<div style="font-size:11px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">Finals: ${p.finalsPick} in ${p.finalsGames}</div>` : ''}
+    <div class="tiebreaker-row">
+      <span class="tiebreaker-label">TB Total</span>
+      <span class="tiebreaker-value${p.tiebreakerTotal === 0 ? ' zero' : ''}">${p.tiebreakerTotal}</span>
+    </div>
   </div>`;
 }
 
 function renderSeriesSection() {
   const eastSeries = getConferenceSeries('east');
   const westSeries = getConferenceSeries('west');
+  if (!eastSeries.length && !westSeries.length) return `<div class="divider"></div><div class="empty-state">Playoff bracket not yet loaded.</div>`;
 
-  if (eastSeries.length === 0 && westSeries.length === 0) {
-    return `<div class="divider"></div><div class="empty-state">Playoff bracket not yet loaded. ${state.apiError ? 'Running in demo mode.' : 'Refresh to load.'}</div>`;
-  }
-
-  const renderConference = (conf, series) => {
+  const renderConf = (label, series) => {
     const grouped = {};
     series.forEach(s => {
       const key = s.roundName || ('Round ' + s.round);
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(s);
     });
-
     return Object.entries(grouped).map(([rName, rSeries]) => `
       <div class="section-header" style="margin-top:22px">
-        <div class="section-title">${conf} — ${rName}</div>
-        <span class="conference-tag tag-${conf.toLowerCase()}">${conf}</span>
+        <div class="section-title">${label} — ${rName}</div>
+        <span class="conference-tag tag-${label.toLowerCase()}">${label}</span>
       </div>
-      <div class="series-grid">
-        ${rSeries.map(s => renderSeriesCard(s)).join('')}
-      </div>
+      <div class="series-grid">${rSeries.map(renderSeriesCard).join('')}</div>
     `).join('');
   };
 
   return `
     <div class="divider"></div>
     <div class="section-header"><div class="section-title">Playoff Bracket</div></div>
-    ${renderConference('Eastern', eastSeries)}
-    ${renderConference('Western', westSeries)}
-  `;
+    ${renderConf('Eastern', eastSeries)}
+    ${renderConf('Western', westSeries)}`;
 }
 
 function renderSeriesCard(s) {
-  const t1 = s.teams[0] || {};
-  const t2 = s.teams[1] || {};
+  const t1 = s.teams[0] || {}, t2 = s.teams[1] || {};
   let statusClass = 'pre', statusLabel = 'Upcoming', badgeClass = 'badge-pre';
   if (s.tipped && s.status !== 'post') { statusClass = 'locked'; statusLabel = 'In Progress'; badgeClass = 'badge-locked'; }
   if (s.status === 'post') { statusClass = 'complete'; statusLabel = 'Complete'; badgeClass = 'badge-complete'; }
+  const t1W = s.winner === t1.name, t2W = s.winner === t2.name, hasW = !!s.winner;
 
-  const t1Winner = s.winner === t1.name;
-  const t2Winner = s.winner === t2.name;
-  const hasWinner = !!s.winner;
-
-  const renderTeam = (team, isWinner, isLoser) => `
-    <div class="series-team" style="opacity:${isLoser ? '0.4' : '1'}">
-      <div class="series-seed">#${team.seed || '?'}</div>
-      ${team.logo
-        ? `<img src="${team.logo}" alt="${team.abbrev}" style="width:52px;height:52px;object-fit:contain;margin:6px auto;display:block;${isLoser ? 'filter:grayscale(1)' : ''}" onerror="this.style.display='none'" />`
-        : `<div style="width:52px;height:52px;margin:6px auto;background:var(--surface2);border-radius:50%;"></div>`}
-      <div class="series-team-name ${isWinner ? 'winner' : isLoser ? 'loser' : ''}">${team.abbrev || team.name || '?'}</div>
-      <div style="font-size:13px;color:var(--text3);margin-top:2px;">${team.name || ''}</div>
-      <div class="series-wins" style="margin-top:4px;">${team.wins || 0} W</div>
+  const mkTeam = (team, isWinner, isLoser) => `
+    <div class="series-team" style="opacity:${isLoser?'0.4':'1'}">
+      <div class="series-seed">#${team.seed||'?'}</div>
+      ${team.logo ? `<img src="${team.logo}" alt="${team.abbrev}" style="width:52px;height:52px;object-fit:contain;margin:6px auto;display:block;${isLoser?'filter:grayscale(1)':''}" onerror="this.style.display='none'" />` : `<div style="width:52px;height:52px;margin:6px auto;background:var(--surface2);border-radius:50%;"></div>`}
+      <div class="series-team-name ${isWinner?'winner':isLoser?'loser':''}">${team.abbrev||team.name||'?'}</div>
+      <div style="font-size:13px;color:var(--text3);margin-top:2px;">${team.name||''}</div>
+      <div class="series-wins">${team.wins||0} W</div>
       ${isWinner ? `<div style="font-size:12px;color:var(--alive);font-weight:700;margin-top:4px;">✓ Winner</div>` : ''}
     </div>`;
 
   return `<div class="series-card ${statusClass}">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <div class="series-round-label" style="margin-bottom:0">${s.roundName || 'Round ' + s.round}</div>
+      <div class="series-round-label" style="margin-bottom:0">${s.roundName||'Round '+s.round}</div>
       <span class="series-status-badge ${badgeClass}">${statusLabel}</span>
     </div>
     <div class="series-matchup">
-      ${renderTeam(t1, t1Winner, hasWinner && !t1Winner)}
+      ${mkTeam(t1, t1W, hasW && !t1W)}
       <div class="series-vs">vs</div>
-      ${renderTeam(t2, t2Winner, hasWinner && !t2Winner)}
+      ${mkTeam(t2, t2W, hasW && !t2W)}
     </div>
   </div>`;
 }
@@ -1359,11 +875,11 @@ function renderSeriesCard(s) {
 function renderAdminPanel() {
   return `<div class="admin-panel">
     <div class="admin-title">⚠ Commissioner Panel</div>
-    <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">Override player status, eliminate players manually, or reset picks.</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">Manage players, override statuses, reset PINs.</div>
     <div class="admin-grid">
       ${state.players.map(p => `
         <div style="background:var(--surface2);border-radius:8px;padding:10px 14px;font-size:14px;">
-          <strong>${p.name}</strong> <span style="font-size:12px;color:var(--text3);">PIN: ${p.pin || '—'}</span>
+          <strong>${p.name}</strong> <span style="font-size:12px;color:var(--text3)">PIN: ${p.pin || '—'}</span>
           <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
             <button class="btn-secondary" onclick="adminToggle('${p.id}','east')">${p.eastAlive ? 'Elim East' : 'Restore East'}</button>
             <button class="btn-secondary" onclick="adminToggle('${p.id}','west')">${p.westAlive ? 'Elim West' : 'Restore West'}</button>
@@ -1374,10 +890,11 @@ function renderAdminPanel() {
     </div>
     <div class="admin-field" style="margin-top:8px">
       <input type="text" id="admin-add-name" placeholder="Add player name" style="width:200px"/>
+      <input type="text" id="admin-add-pin" placeholder="PIN (optional)" maxlength="4" style="width:100px"/>
       <button class="btn-secondary" onclick="adminAddPlayer()">Add Player</button>
     </div>
     <div style="margin-top:12px">
-      <button class="btn-danger" onclick="adminRefreshNow()">Force API Refresh</button>
+      <button class="btn-danger" onclick="handleRefresh()">Force Refresh</button>
     </div>
   </div>`;
 }
@@ -1402,12 +919,10 @@ function renderAdminModal() {
 // ============================================================
 // EVENT HANDLERS
 // ============================================================
-let selectedPicks = { east: null, west: null };
-
 function attachLoginEvents() {
   document.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
-      if (document.getElementById('login-select')) handleLogin();
+      if (document.getElementById('login-select'))  handleLogin();
       if (document.getElementById('new-player-name')) handleNewPlayer();
       if (document.getElementById('admin-pw-input')) handleAdminLogin();
     }
@@ -1429,6 +944,7 @@ function handleLogin() {
   if (!player) { showError('login-error', 'Player not found.'); return; }
   if (player.pin !== pin) { showError('login-error', 'Incorrect PIN. Try again.'); return; }
   state.currentPlayer = sel.value;
+  state.currentPin    = pin;
   render();
 }
 
@@ -1437,52 +953,59 @@ function showNewPlayer() {
   box.innerHTML = `
     <div class="login-logo">NBA <span>Pool</span></div>
     <div class="login-sub">Join the 2025 Playoff Survivor Pool</div>
-    <div class="login-field">
-      <label>Your name</label>
-      <input type="text" id="new-player-name" placeholder="Enter your name" autofocus />
-    </div>
-    <div class="login-field">
-      <label>Choose a 4-digit PIN</label>
-      <input type="password" inputmode="numeric" maxlength="4" id="new-player-pin" placeholder="e.g. 1234" />
-    </div>
-    <div class="login-field">
-      <label>Confirm PIN</label>
-      <input type="password" inputmode="numeric" maxlength="4" id="new-player-pin2" placeholder="Re-enter PIN" />
-    </div>
-    <button class="login-btn" onclick="handleNewPlayer()">Join Pool →</button>
+    <div class="login-field"><label>Your name</label><input type="text" id="new-player-name" placeholder="Enter your name" autofocus /></div>
+    <div class="login-field"><label>Choose a 4-digit PIN</label><input type="password" inputmode="numeric" maxlength="4" id="new-player-pin" placeholder="e.g. 1234" /></div>
+    <div class="login-field"><label>Confirm PIN</label><input type="password" inputmode="numeric" maxlength="4" id="new-player-pin2" placeholder="Re-enter PIN" /></div>
+    <button class="login-btn" id="join-btn" onclick="handleNewPlayer()">Join Pool →</button>
     <div style="margin-top:10px"><button class="login-new-btn" onclick="render()">← Back</button></div>
-    <div class="login-error" id="login-error"></div>
-  `;
+    <div class="login-error" id="login-error"></div>`;
   attachLoginEvents();
 }
 
-function renderLogin2() { render(); }
-
-function handleNewPlayer() {
-  const inp = document.getElementById('new-player-name');
-  const pinInp = document.getElementById('new-player-pin');
+async function handleNewPlayer() {
+  const nameInp = document.getElementById('new-player-name');
+  const pinInp  = document.getElementById('new-player-pin');
   const pin2Inp = document.getElementById('new-player-pin2');
-  if (!inp || !inp.value.trim()) { showError('login-error', 'Please enter your name.'); return; }
-  const name = inp.value.trim();
-  const pin = pinInp?.value?.trim();
+  const btn     = document.getElementById('join-btn');
+
+  if (!nameInp?.value.trim()) { showError('login-error', 'Please enter your name.'); return; }
+  const name = nameInp.value.trim();
+  const pin  = pinInp?.value?.trim();
   const pin2 = pin2Inp?.value?.trim();
+
   if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) { showError('login-error', 'PIN must be exactly 4 digits.'); return; }
   if (pin !== pin2) { showError('login-error', 'PINs do not match.'); return; }
-  if (state.players.find(p => p.name.toLowerCase() === name.toLowerCase())) {
-    showError('login-error', 'That name is already taken — select it from the list.');
+  if (state.players.find(p => p.name.toLowerCase() === name.toLowerCase())) { showError('login-error', 'That name is already taken.'); return; }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Joining…'; }
+
+  if (DEMO_MODE) {
+    const id = 'p_' + Date.now();
+    state.players.push({ id, name, pin, eastPicks:[], westPicks:[], eastAlive:true, westAlive:true, eastEliminatedDate:null, westEliminatedDate:null, finalsPick:null, finalsGames:null });
+    state.currentPlayer = id;
+    state.currentPin    = pin;
+    showToast('Welcome to the pool, ' + name + '!', 'success');
+    render();
     return;
   }
-  const id = 'p_' + Date.now();
-  state.players.push({ id, name, pin, eastPicks: [], westPicks: [], eastAlive: true, westAlive: true, eastEliminatedDate: null, westEliminatedDate: null, finalsPick: null, finalsGames: null });
-  state.currentPlayer = id;
-  saveState();
-  render();
-  showToast('Welcome to the pool, ' + name + '!', 'success');
+
+  try {
+    const result = await apiPost({ action: 'addPlayer', name, pin });
+    state.players.push({ id: result.id, name, pin, eastPicks:[], westPicks:[], eastAlive:true, westAlive:true, eastEliminatedDate:null, westEliminatedDate:null, finalsPick:null, finalsGames:null });
+    state.currentPlayer = result.id;
+    state.currentPin    = pin;
+    showToast('Welcome to the pool, ' + name + '!', 'success');
+    render();
+  } catch(e) {
+    showError('login-error', e.message || 'Could not join pool.');
+    if (btn) { btn.disabled = false; btn.textContent = 'Join Pool →'; }
+  }
 }
 
 function handleLogout() {
   state.currentPlayer = null;
-  state.isAdmin = false;
+  state.currentPin    = null;
+  state.isAdmin       = false;
   selectedPicks = { east: null, west: null };
   render();
 }
@@ -1497,24 +1020,26 @@ function handlePickSelect(btn, conf) {
   if (submitBtn) submitBtn.disabled = false;
 }
 
-function handleSubmitPick(conf) {
+async function handleSubmitPick(conf) {
   const pick = selectedPicks[conf];
   if (!pick) return;
-  const ok = submitPick(conf, pick.team, pick.round);
+  const btn = document.getElementById(conf + '-submit-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+  const ok = await submitPick(conf, pick.team, pick.round);
   if (ok) {
     showToast(conf.toUpperCase() + ' pick locked: ' + pick.team, 'success');
     selectedPicks[conf] = null;
     render();
   } else {
-    showToast('Could not submit pick.', 'error');
+    if (btn) { btn.disabled = false; btn.textContent = 'Lock ' + (conf === 'east' ? 'East' : 'West') + ' Pick'; }
   }
 }
 
-function handleFinalsPick() {
+async function handleFinalsPick() {
   const champ = document.getElementById('finals-champ')?.value;
   const games = document.getElementById('finals-games')?.value;
   if (!champ || !games) { showToast('Please complete both fields.', 'error'); return; }
-  submitFinalsPick(champ, games);
+  await submitFinalsPick(champ, games);
   showToast('Finals picks submitted!', 'success');
   render();
 }
@@ -1522,7 +1047,7 @@ function handleFinalsPick() {
 async function handleRefresh() {
   const btn = document.getElementById('refresh-btn');
   if (btn) btn.innerHTML = '<span class="spinner"></span>';
-  await fetchPlayoffData();
+  await refreshState();
   render();
   showToast('Data refreshed.', 'success');
 }
@@ -1541,9 +1066,7 @@ function handleAdminLogin() {
   if (pw === CONFIG.ADMIN_PASSWORD) {
     state.isAdmin = true;
     closeModal();
-    if (!state.currentPlayer && state.players.length > 0) {
-      state.currentPlayer = state.players[0].id;
-    }
+    if (!state.currentPlayer && state.players.length > 0) state.currentPlayer = state.players[0].id;
     render();
     showToast('Commissioner mode active.', 'success');
   } else {
@@ -1551,56 +1074,65 @@ function handleAdminLogin() {
   }
 }
 
-function adminToggle(playerId, conf) {
+async function adminToggle(playerId, conf) {
   const player = state.players.find(p => p.id === playerId);
   if (!player) return;
-  if (conf === 'east') {
-    player.eastAlive = !player.eastAlive;
-    if (!player.eastAlive) player.eastEliminatedDate = new Date().toISOString().split('T')[0];
-    else player.eastEliminatedDate = null;
-  } else {
-    player.westAlive = !player.westAlive;
-    if (!player.westAlive) player.westEliminatedDate = new Date().toISOString().split('T')[0];
-    else player.westEliminatedDate = null;
+  const alive = conf === 'east' ? !player.eastAlive : !player.westAlive;
+  const today = new Date().toISOString().split('T')[0];
+
+  if (conf === 'east') { player.eastAlive = alive; player.eastEliminatedDate = alive ? null : today; }
+  else { player.westAlive = alive; player.westEliminatedDate = alive ? null : today; }
+
+  if (!DEMO_MODE) {
+    try { await apiPost({ action: 'adminElim', adminPassword: CONFIG.ADMIN_PASSWORD, playerId, conference: conf, alive }); }
+    catch(e) { showToast(e.message || 'Admin action failed.', 'error'); }
   }
-  saveState();
   render();
-  showToast(player.name + ' ' + conf.toUpperCase() + ' status updated.', 'success');
+  showToast(`${player.name} ${conf.toUpperCase()} status updated.`, 'success');
 }
 
-function adminResetPin(playerId) {
+async function adminResetPin(playerId) {
   const player = state.players.find(p => p.id === playerId);
   if (!player) return;
   const newPin = prompt(`Reset PIN for ${player.name}. Enter new 4-digit PIN:`);
   if (!newPin || !/^\d{4}$/.test(newPin.trim())) { showToast('Invalid PIN — must be 4 digits.', 'error'); return; }
   player.pin = newPin.trim();
-  saveState();
+  if (!DEMO_MODE) {
+    try { await apiPost({ action: 'adminResetPin', adminPassword: CONFIG.ADMIN_PASSWORD, playerId, newPin: newPin.trim() }); }
+    catch(e) { showToast(e.message || 'Reset failed.', 'error'); }
+  }
   render();
-  showToast(`${player.name}'s PIN reset to ${newPin.trim()}.`, 'success');
+  showToast(`${player.name}'s PIN reset.`, 'success');
 }
 
-function adminRemovePlayer(playerId) {
-  if (!confirm('Remove this player?')) return;
+async function adminRemovePlayer(playerId) {
+  if (!confirm('Remove this player and all their picks?')) return;
   state.players = state.players.filter(p => p.id !== playerId);
   if (state.currentPlayer === playerId) state.currentPlayer = state.players[0]?.id || null;
-  saveState();
+  if (!DEMO_MODE) {
+    try { await apiPost({ action: 'adminRemovePlayer', adminPassword: CONFIG.ADMIN_PASSWORD, playerId }); }
+    catch(e) { showToast(e.message || 'Remove failed.', 'error'); }
+  }
   render();
 }
 
-function adminAddPlayer() {
-  const inp = document.getElementById('admin-add-name');
-  if (!inp || !inp.value.trim()) return;
-  const name = inp.value.trim();
+async function adminAddPlayer() {
+  const nameInp = document.getElementById('admin-add-name');
+  const pinInp  = document.getElementById('admin-add-pin');
+  if (!nameInp?.value.trim()) return;
+  const name = nameInp.value.trim();
+  const pin  = pinInp?.value?.trim() || '0000';
   if (state.players.find(p => p.name.toLowerCase() === name.toLowerCase())) { showToast('Player already exists.', 'error'); return; }
   const id = 'p_' + Date.now();
-  state.players.push({ id, name, eastPicks: [], westPicks: [], eastAlive: true, westAlive: true, eastEliminatedDate: null, westEliminatedDate: null, finalsPick: null, finalsGames: null });
-  saveState();
+  state.players.push({ id, name, pin, eastPicks:[], westPicks:[], eastAlive:true, westAlive:true, eastEliminatedDate:null, westEliminatedDate:null, finalsPick:null, finalsGames:null });
+  if (!DEMO_MODE) {
+    try { await apiPost({ action: 'adminAddPlayer', adminPassword: CONFIG.ADMIN_PASSWORD, name, pin }); }
+    catch(e) { showToast(e.message || 'Add failed.', 'error'); }
+  }
+  nameInp.value = '';
+  if (pinInp) pinInp.value = '';
   render();
   showToast(name + ' added to pool.', 'success');
-}
-
-function adminRefreshNow() {
-  handleRefresh();
 }
 
 // ============================================================
@@ -1622,13 +1154,12 @@ function showError(id, msg) {
 // INIT
 // ============================================================
 async function init() {
-  loadState();
-  await fetchPlayoffData();
+  render(); // show loading screen immediately
+  await loadState();
   render();
-
-  // Auto-refresh every 5 minutes
+  // Auto-refresh every 5 minutes (no-op in demo mode)
   setInterval(async () => {
-    await fetchPlayoffData();
+    await refreshState();
     render();
   }, CONFIG.REFRESH_INTERVAL);
 }
