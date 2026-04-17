@@ -152,7 +152,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .btn-danger{background:rgba(240,85,85,.1);border:1px solid rgba(240,85,85,.3);color:var(--red);border-radius:7px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
 .btn-danger:hover{background:rgba(240,85,85,.2)}
 .admin-player-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
-.admin-sub-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--red);margin:14px 0 8px}
 .admin-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
@@ -184,13 +183,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 <div class="toast" id="toast"></div>
 <script>
 // ════════════════════════════════════════════════════════════════
-//  CONFIG  ← paste your Apps Script deployment URL below
+//  CONFIG
 // ════════════════════════════════════════════════════════════════
 const CONFIG = {
-  PROXY_URL: 'https://script.google.com/macros/s/AKfycbyWuo5pUANij-5Yhg6bV5PkZ-XzGF-99v0w2x97U8-oYlGIcBXZ46X3nRltrXF2ELyT/exec',          // ← YOUR GOOGLE APPS SCRIPT URL HERE
+  PROXY_URL: 'https://script.google.com/macros/s/AKfycbwRNjVYoi3FC1N07-ETCTjerTiJJ1o4EW6Jk-w5nxg2c45YzsiZfmIRmR47krmeMR11oA/exec',          // ← YOUR GOOGLE APPS SCRIPT DEPLOYMENT URL HERE
   ADMIN_PASSWORD: 'commish2026',
   BUY_IN: 20,
-  REFRESH_INTERVAL: 120000  // 2 minutes
+  REFRESH_INTERVAL: 120000
 };
 
 // ════════════════════════════════════════════════════════════════
@@ -220,19 +219,38 @@ function calcWinnings(player) {
 }
 
 // ════════════════════════════════════════════════════════════════
-//  API
+//  API — JSONP via script tag (bypasses CORS preflight entirely)
 // ════════════════════════════════════════════════════════════════
-async function apiGet(action) {
-  const r = await fetch(`${CONFIG.PROXY_URL}?action=${action}`);
-  const j = await r.json();
-  if (!j.success) throw new Error(j.error || 'API error');
-  return j.data;
-}
-async function apiPost(body) {
-  const r = await fetch(CONFIG.PROXY_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-  const j = await r.json();
-  if (!j.success) throw new Error(j.error || 'API error');
-  return j.data;
+function apiCall(action, payload) {
+  return new Promise((resolve, reject) => {
+    const cbName = '_cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+    let url = `${CONFIG.PROXY_URL}?action=${encodeURIComponent(action)}&callback=${cbName}`;
+    if (payload) url += `&payload=${encodeURIComponent(JSON.stringify(payload))}`;
+
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error('Request timed out'));
+    }, 15000);
+
+    function cleanup() {
+      clearTimeout(timeout);
+      delete window[cbName];
+      const el = document.getElementById(cbName);
+      if (el) el.remove();
+    }
+
+    window[cbName] = function(json) {
+      cleanup();
+      if (!json.success) reject(new Error(json.error || 'API error'));
+      else resolve(json.data);
+    };
+
+    const script = document.createElement('script');
+    script.id  = cbName;
+    script.src = url;
+    script.onerror = () => { cleanup(); reject(new Error('Network error — check your Apps Script URL')); };
+    document.head.appendChild(script);
+  });
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -247,7 +265,7 @@ async function init() {
 }
 async function loadState() {
   try {
-    const d = await apiGet('getState');
+    const d = await apiCall('getState');
     state.players     = d.players  || [];
     state.series      = d.series   || [];
     state.lastUpdated = d.lastUpdated || null;
@@ -267,10 +285,11 @@ async function handleLogin() {
   const err = document.getElementById('login-error');
   if (!sel) { err.textContent = 'Please select your name.'; return; }
   const p = state.players.find(x => x.id === sel);
-  if (!p)           { err.textContent = 'Player not found.'; return; }
-  if (p.pin !== pin){ err.textContent = 'Incorrect PIN.'; return; }
+  if (!p)            { err.textContent = 'Player not found.'; return; }
+  if (p.pin !== pin) { err.textContent = 'Incorrect PIN.'; return; }
   state.currentPlayer = sel; state.currentPin = pin; pendingPicks = {}; render();
 }
+
 async function handleNewPlayer() {
   const name = document.getElementById('new-player-name')?.value?.trim();
   const pin  = document.getElementById('new-player-pin')?.value?.trim();
@@ -279,19 +298,20 @@ async function handleNewPlayer() {
   if (!name)                 { err.textContent = 'Please enter your name.'; return; }
   if (!/^\d{4}$/.test(pin)) { err.textContent = 'PIN must be exactly 4 digits.'; return; }
   if (pin !== pin2)          { err.textContent = 'PINs do not match.'; return; }
-  if (state.players.find(x => x.name.toLowerCase()===name.toLowerCase())) { err.textContent = 'Name already taken.'; return; }
+  if (state.players.find(x => x.name.toLowerCase() === name.toLowerCase())) { err.textContent = 'Name already taken.'; return; }
   const btn = document.getElementById('join-btn');
-  if (btn) { btn.disabled=true; btn.textContent='Joining…'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Joining…'; }
   try {
-    const res = await apiPost({ action:'register', name, pin });
+    const res = await apiCall('register', { name, pin });
     state.players.push({ id:res.id, name:res.name, pin, picks:[] });
     state.currentPlayer = res.id; state.currentPin = pin; pendingPicks = {};
     render(); showToast('Welcome, ' + name + '!', 'success');
   } catch(e) {
     err.textContent = e.message;
-    if (btn) { btn.disabled=false; btn.textContent='Join Pool →'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Join Pool →'; }
   }
 }
+
 function handleLogout() { state.currentPlayer=null; state.currentPin=null; state.isAdmin=false; pendingPicks={}; render(); }
 function showAdminLogin() { document.getElementById('admin-modal').style.display='flex'; setTimeout(()=>document.getElementById('admin-pw-input')?.focus(),80); }
 function closeModal() { document.getElementById('admin-modal').style.display='none'; }
@@ -325,7 +345,7 @@ async function submitAllPicks() {
   const btn = document.querySelector('.btn-submit');
   if (btn) { btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Saving…'; }
   try {
-    await apiPost({ action:'submitPicks', playerId:player.id, pin:state.currentPin, picks:toSubmit });
+    await apiCall('submitPicks', { playerId:player.id, pin:state.currentPin, picks:toSubmit });
     if (!player.picks) player.picks=[];
     player.picks.push(...toSubmit);
     pendingPicks={};
@@ -344,7 +364,7 @@ async function adminSaveOdds(sid) {
   const o2 = parseInt(document.getElementById('ao2-'+sid)?.value);
   if (isNaN(o1)||isNaN(o2)) { showToast('Enter valid odds (e.g. -500 or +380).','error'); return; }
   try {
-    await apiPost({ action:'adminSetOdds', adminPassword:CONFIG.ADMIN_PASSWORD, seriesId:sid, odds1:o1, odds2:o2 });
+    await apiCall('adminSetOdds', { adminPassword:CONFIG.ADMIN_PASSWORD, seriesId:sid, odds1:o1, odds2:o2 });
     const s=state.series.find(x=>x.id===sid);
     if (s){s.odds1=o1;s.odds2=o2;}
     render(); showToast('Odds saved!','success');
@@ -355,7 +375,7 @@ async function adminAddPlayer() {
   const pin  = document.getElementById('admin-add-pin')?.value?.trim()||'0000';
   if (!name) { showToast('Enter a name.','error'); return; }
   try {
-    const res = await apiPost({ action:'adminAddPlayer', adminPassword:CONFIG.ADMIN_PASSWORD, name, pin });
+    const res = await apiCall('adminAddPlayer', { adminPassword:CONFIG.ADMIN_PASSWORD, name, pin });
     state.players.push({id:res.id, name:res.name, pin, picks:[]});
     document.getElementById('admin-add-name').value='';
     document.getElementById('admin-add-pin').value='';
@@ -367,7 +387,7 @@ async function adminResetPin(pid) {
   const np=prompt('Reset PIN for '+player?.name+'. New 4-digit PIN:');
   if (!np||!/^\d{4}$/.test(np.trim())) { showToast('Invalid PIN.','error'); return; }
   try {
-    await apiPost({ action:'adminResetPin', adminPassword:CONFIG.ADMIN_PASSWORD, playerId:pid, newPin:np.trim() });
+    await apiCall('adminResetPin', { adminPassword:CONFIG.ADMIN_PASSWORD, playerId:pid, newPin:np.trim() });
     player.pin=np.trim(); showToast(player.name+"'s PIN reset.",'success');
   } catch(e) { showToast('Error: '+e.message,'error'); }
 }
@@ -375,7 +395,7 @@ async function adminRemovePlayer(pid) {
   const player=state.players.find(p=>p.id===pid);
   if (!confirm('Remove '+player?.name+' and all their picks?')) return;
   try {
-    await apiPost({ action:'adminRemovePlayer', adminPassword:CONFIG.ADMIN_PASSWORD, playerId:pid });
+    await apiCall('adminRemovePlayer', { adminPassword:CONFIG.ADMIN_PASSWORD, playerId:pid });
     state.players=state.players.filter(p=>p.id!==pid);
     if (state.currentPlayer===pid) state.currentPlayer=null;
     render();
@@ -387,8 +407,8 @@ async function adminRemovePlayer(pid) {
 // ════════════════════════════════════════════════════════════════
 function getPlayerPick(player, sid) { return (player?.picks||[]).find(pk=>pk.seriesId===sid)||null; }
 function getStandings() { return state.players.map(p=>({...p,winnings:calcWinnings(p)})).sort((a,b)=>b.winnings-a.winnings); }
-function oddsLabel(o) { return (!o && o!==0) ? {label:'TBD',cls:'na'} : {label:(o>0?'+':'')+o, cls:o<0?'fav':'dog'}; }
-function safeName(n) { return (n||'').replace(/'/g,"\\'"); }
+function oddsLabel(o) { return (!o&&o!==0)?{label:'TBD',cls:'na'}:{label:(o>0?'+':'')+o,cls:o<0?'fav':'dog'}; }
+function safeName(n) { return (n||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
 // ════════════════════════════════════════════════════════════════
 //  RENDER
@@ -400,7 +420,7 @@ function render() {
     return;
   }
   if (!CONFIG.PROXY_URL) {
-    app.innerHTML=`<div class="full-screen"><div class="card-box"><div class="logo">NBA <span>Money Pool</span></div><div style="margin-top:16px;font-size:13px;color:var(--text2);line-height:1.7">Open this file and set <code style="color:var(--gold)">CONFIG.PROXY_URL</code> to your Google Apps Script URL, then reload.</div></div></div>`;
+    app.innerHTML=`<div class="full-screen"><div class="card-box"><div class="logo">NBA <span>Money Pool</span></div><p style="margin-top:16px;font-size:13px;color:var(--text2);line-height:1.7">Set <code style="color:var(--gold)">CONFIG.PROXY_URL</code> to your Google Apps Script URL and reload.</p></div></div>`;
     return;
   }
   if (!state.currentPlayer) { app.innerHTML=renderLogin(); attachLoginEvents(); return; }
@@ -420,7 +440,7 @@ function render() {
       </div>
     </div>
     <div class="main fade-in">
-      ${state.isAdmin ? renderAdminPanel() : ''}
+      ${state.isAdmin?renderAdminPanel():''}
       ${renderBanner(standings)}
       ${renderPickPanel(player)}
       ${renderLeaderboard(standings)}
@@ -428,12 +448,10 @@ function render() {
       ${renderSeriesSection('West')}
     </div>
     ${renderAdminModal()}`;
-
-  document.getElementById('login-pin')?.addEventListener('keydown',e=>{if(e.key==='Enter')handleLogin();});
 }
 
 function renderLogin() {
-  const has = state.players.length>0;
+  const has=state.players.length>0;
   return `<div class="full-screen"><div class="card-box" id="login-box">
     <div class="logo">NBA <span>Money Pool</span></div>
     <div class="sub">2026 Playoffs · Moneyline Pick'em</div>
@@ -452,6 +470,7 @@ function renderLogin() {
     <div class="err-msg" id="login-error"></div>
   </div></div>${renderAdminModal()}`;
 }
+
 function showNewPlayerForm() {
   const b=document.getElementById('login-box');
   if(!b)return;
@@ -463,7 +482,10 @@ function showNewPlayerForm() {
     <button class="btn-outline" onclick="render()">← Back</button>
     <div class="err-msg" id="login-error"></div>`;
 }
-function attachLoginEvents() { document.getElementById('login-pin')?.addEventListener('keydown',e=>{if(e.key==='Enter')handleLogin();}); }
+
+function attachLoginEvents() {
+  document.getElementById('login-pin')?.addEventListener('keydown',e=>{if(e.key==='Enter')handleLogin();});
+}
 
 function renderBanner(standings) {
   const pot=state.players.length*CONFIG.BUY_IN;
@@ -481,11 +503,9 @@ function renderBanner(standings) {
 
 function renderPickPanel(player) {
   if (!player) return '';
-  const unpicked = state.series.filter(s=>
-    s.status==='pre' && s.team1?.abbrev!=='TBD' && s.team2?.abbrev!=='TBD' && !getPlayerPick(player,s.id)
-  );
+  const unpicked=state.series.filter(s=>s.status==='pre'&&s.team1?.abbrev!=='TBD'&&s.team2?.abbrev!=='TBD'&&!getPlayerPick(player,s.id));
   if (!unpicked.length) return '';
-  const hasAny = Object.values(pendingPicks).some(p=>p.team);
+  const hasAny=Object.values(pendingPicks).some(p=>p.team);
   return `<div class="pick-panel" id="pick-panel">
     <div class="pick-panel-title">Make Your Picks</div>
     <div class="pick-panel-sub">Pick the series winner ($100 bet). Correct game count = 2× payout! Picks lock automatically when a series goes Live.</div>
@@ -493,6 +513,7 @@ function renderPickPanel(player) {
     ${hasAny?`<div class="submit-row"><button class="btn-submit" onclick="submitAllPicks()">Submit Picks →</button></div>`:''}
   </div>`;
 }
+
 function renderPickBlock(player, s) {
   const pend=pendingPicks[s.id]||{};
   const o1=oddsLabel(s.odds1); const o2=oddsLabel(s.odds2);
@@ -520,6 +541,7 @@ function renderPickBlock(player, s) {
     </div>
   </div>`;
 }
+
 function refreshPickPanel() {
   const panel=document.getElementById('pick-panel');
   if(!panel)return render();
@@ -574,7 +596,6 @@ function renderSeriesCard(s, player) {
   const t2w=s.winner&&s.winner===s.team2?.name;
   const o1=oddsLabel(s.odds1); const o2=oddsLabel(s.odds2);
   const badgeLabel={pre:'Upcoming',live:'🔴 Live — picks locked',post:'Final',tbd:'TBD'};
-
   let myPickHtml='';
   if(myPick){
     const odds=s.team1?.name===myPick.team?s.odds1:s.odds2;
@@ -587,7 +608,6 @@ function renderSeriesCard(s, player) {
       myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong>${pay?`<br>Potential: $${pay}${myPick.games?` ($${pay*2} if ${myPick.games}g)`:''}`:''}`;
     }
   }
-
   const adminBlock=state.isAdmin?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(240,85,85,.15)">
     <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:6px">COMMISSIONER ODDS</div>
     <div class="admin-row">
@@ -597,7 +617,6 @@ function renderSeriesCard(s, player) {
     </div>
     <div style="font-size:11px;color:var(--text3);margin-top:4px">Status, winner &amp; game count auto-detected from ESPN</div>
   </div>`:'';
-
   return `<div class="series-card status-${eff}">
     <div class="series-round">${s.roundName} · ${s.conf}</div>
     <div class="matchup">
@@ -636,12 +655,12 @@ function renderAdminPanel() {
       <input class="admin-input" id="admin-add-pin" placeholder="PIN" maxlength="4" style="width:80px">
       <button class="btn-sec" onclick="adminAddPlayer()">Add Player</button>
     </div>
-    <div class="admin-sub-title" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--red);margin:14px 0 8px">Players</div>
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--red);margin:14px 0 8px">Players</div>
     ${state.players.map(p=>`<div class="admin-player-row"><span style="font-weight:700">${p.name}</span><div style="display:flex;gap:6px"><button class="btn-sec" onclick="adminResetPin('${p.id}')">Reset PIN</button><button class="btn-danger" onclick="adminRemovePlayer('${p.id}')">Remove</button></div></div>`).join('')}
     ${!state.players.length?`<div class="empty" style="padding:12px">No players yet.</div>`:''}
-    <div style="margin-top:16px;font-size:13px;color:var(--text2);line-height:1.8;background:var(--surface2);border-radius:8px;padding:12px">
-      <strong style="color:var(--red)">Your only job:</strong> enter the series moneyline odds on each card below when announced.<br>
-      ESPN auto-detects: Live status (locks picks) · Series winner · Game count · Win totals
+    <div style="margin-top:16px;font-size:13px;color:var(--text2);background:var(--surface2);border-radius:8px;padding:12px;line-height:1.8">
+      <strong style="color:var(--red)">Your only job:</strong> enter series moneyline odds on each card below.<br>
+      ESPN auto-detects: Live status (locks picks) · Winner · Game count
     </div>
   </div>`;
 }
