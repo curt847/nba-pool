@@ -195,6 +195,8 @@ let state={players:[],series:[],currentPlayer:null,currentPin:null,isAdmin:false
 let pendingPicks={};
 
 function calcPayout(odds){if(!odds&&odds!==0)return null;return odds>0?odds:Math.round(10000/Math.abs(odds));}
+function roundMultiplier(round){return {1:1, 2:1.1, 3:1.25, 4:1.5}[round]||1;}
+function applyMultiplier(pts, round){return Math.round(pts * roundMultiplier(round));}
 function calcWinnings(player){
   let total=0;
   (player.picks||[]).forEach(pk=>{
@@ -202,7 +204,8 @@ function calcWinnings(player){
     if(!s||s.status!=='post'||!s.winner||s.winner!==pk.team)return;
     const odds=s.team1.name===pk.team?s.odds1:s.odds2;
     const pay=calcPayout(odds);if(!pay)return;
-    total+=(pk.games&&s.games&&pk.games===s.games)?pay*2:pay;
+    const base=(pk.games&&s.games&&pk.games===s.games)?pay*2:pay;
+    total+=applyMultiplier(base, s.round);
   });
   return total;
 }
@@ -437,7 +440,7 @@ function renderPickPanel(player){
   const hasAny=Object.values(pendingPicks).some(p=>p.team);
   return `<div class="pick-panel" id="pick-panel">
     <div class="pick-panel-title">Make Your Picks</div>
-    <div class="pick-panel-sub">Pick the series winner ($100 bet). Correct game count = 2x payout! Picks lock automatically when a series goes Live.</div>
+    <div class="pick-panel-sub">Pick the series winner. Correct game count = 2x payout! Picks lock when a series goes Live.<br><span style="color:var(--gold);font-size:13px">Round bonuses: R1 = 1x &nbsp;·&nbsp; R2 = 1.1x &nbsp;·&nbsp; Conf Finals = 1.25x &nbsp;·&nbsp; NBA Finals = 1.5x</span></div>
     ${unpicked.map(s=>renderPickBlock(player,s)).join('')}
     ${hasAny?`<div class="submit-row"><button class="btn-submit" onclick="submitAllPicks()">Submit Picks</button></div>`:''}
   </div>`;
@@ -455,7 +458,7 @@ function renderPickBlock(player,s){
           <span class="pick-btn-name">${team.name}</span>
           <span class="pick-btn-seed">#${team.seed} seed</span>
           <div class="pick-btn-odds ${oLbl.cls}">${oLbl.label}</div>
-          ${payout!=null?`<div class="pick-btn-payout">Win: <strong>${payout} pts</strong></div>`:''}
+          ${payout!=null?`<div class="pick-btn-payout">Win: <strong>${applyMultiplier(payout, s.round)} pts</strong>${roundMultiplier(s.round)>1?' <span style="color:var(--gold);font-size:11px">('+roundMultiplier(s.round)+'x round bonus)</span>':''}</div>`:''}
         </div>
       </div>
     </button>`;
@@ -475,7 +478,7 @@ function refreshPickPanel(){
   const player=state.players.find(p=>p.id===state.currentPlayer);
   const unpicked=state.series.filter(s=>s.status==='pre'&&s.team1?.abbrev!=='TBD'&&s.team2?.abbrev!=='TBD'&&!getPlayerPick(player,s.id));
   const hasAny=Object.values(pendingPicks).some(p=>p.team);
-  panel.innerHTML=`<div class="pick-panel-title">Make Your Picks</div><div class="pick-panel-sub">Pick the series winner ($100 bet). Correct game count = 2x payout! Picks lock automatically when a series goes Live.</div>${unpicked.map(s=>renderPickBlock(player,s)).join('')}${hasAny?`<div class="submit-row"><button class="btn-submit" onclick="submitAllPicks()">Submit Picks</button></div>`:''}`;
+  panel.innerHTML=`<div class="pick-panel-title">Make Your Picks</div><div class="pick-panel-sub">Pick the series winner. Correct game count = 2x payout! Picks lock when a series goes Live.<br><span style="color:var(--gold);font-size:13px">Round bonuses: R1 = 1x &nbsp;·&nbsp; R2 = 1.1x &nbsp;·&nbsp; Conf Finals = 1.25x &nbsp;·&nbsp; NBA Finals = 1.5x</span></div>${unpicked.map(s=>renderPickBlock(player,s)).join('')}${hasAny?`<div class="submit-row"><button class="btn-submit" onclick="submitAllPicks()">Submit Picks</button></div>`:''}`;
 }
 
 function renderLeaderboard(standings){
@@ -488,7 +491,7 @@ function renderLeaderboard(standings){
       const gLabel=pk.games?' ('+pk.games+'g)':'';
       let cls='pending',bonus='';
       if(s.status==='post'&&s.winner){
-        if(s.winner===pk.team){const odds=s.team1.name===pk.team?s.odds1:s.odds2;let pay=calcPayout(odds);if(pay){const dbl=pk.games&&s.games&&pk.games===s.games;if(dbl)pay*=2;cls='won';bonus=' <span class="bonus">+'+pay+' pts</span>';}}
+        if(s.winner===pk.team){const odds=s.team1.name===pk.team?s.odds1:s.odds2;let pay=calcPayout(odds);if(pay){const dbl=pk.games&&s.games&&pk.games===s.games;if(dbl)pay*=2;pay=applyMultiplier(pay,s.round);cls='won';bonus=' <span class="bonus">+'+pay+' pts</span>';}}
         else{cls='lost';}
       }
       return'<span class="pick-chip '+cls+'">'+label+gLabel+bonus+'</span>';
@@ -530,10 +533,10 @@ function renderSeriesCard(s,player){
     const odds=s.team1?.name===myPick.team?s.odds1:s.odds2;
     const pay=calcPayout(odds);const gStr=myPick.games?' in '+myPick.games:'';
     if(s.status==='post'&&s.winner){
-      if(s.winner===myPick.team){const dbl=myPick.games&&s.games&&myPick.games===s.games;const fp=pay?(dbl?pay*2:pay):'?';myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong><br><span class="result-won">+${fp} pts${dbl?' (2x!)':''}</span></span>`;}
+      if(s.winner===myPick.team){const dbl=myPick.games&&s.games&&myPick.games===s.games;let fp=pay?(dbl?pay*2:pay):'?';if(fp!=='?')fp=applyMultiplier(fp,s.round);const mx=roundMultiplier(s.round);myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong><br><span class="result-won">+${fp} pts${dbl?' (2x!)':''}${mx>1?' ('+mx+'x)':''}</span></span>`;}
       else{myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong><br><span class="result-lost">Lost</span></span>`;}
     }else{
-      myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong>${pay?`<br>Potential: ${pay} pts${myPick.games?' ('+pay*2+' pts if '+myPick.games+'g)':''}`:''}`;
+      const mx=roundMultiplier(s.round);const mpay=pay?applyMultiplier(pay,s.round):null;const mpay2=pay?applyMultiplier(pay*2,s.round):null;myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong>${mpay?`<br>Potential: ${mpay} pts${myPick.games?' ('+mpay2+' pts if '+myPick.games+'g)':''}${mx>1?' · '+mx+'x':''}`:''}${!myPick.games&&mpay?'':''}`;
     }
   }
   const adminBlock=state.isAdmin?`<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(240,85,85,.15)">
