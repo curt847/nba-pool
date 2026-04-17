@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NBA Playoff Money Pool 2026</title>
+<title>NBA Playoff Moneyline Pool 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -186,7 +186,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 <div class="toast" id="toast"></div>
 <script>
 const CONFIG={
-  PROXY_URL:'https://script.google.com/macros/s/AKfycbzZvbbYDZ9NfHrdfM3BLCzcr9VuXSi84ArEI-le92Z_GsT9VAV4IVz9tNrBwLz5FcL2UA/exec',
+  PROXY_URL:'https://script.google.com/macros/s/AKfycbzO3naVBGuiLPY6rKXjT2cGvwMEpCekfJXDdEP8AAoAPiWQfKT9kvqnfX2Q2LKyoYkUPw/exec',
   ADMIN_PASSWORD:'commish2026',
   BUY_IN:20,
   REFRESH_INTERVAL:120000
@@ -350,7 +350,7 @@ function safeName(n){return(n||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 function render(){
   const app=document.getElementById('app');
   if(state.loading){
-    app.innerHTML='<div class="full-screen"><div style="text-align:center"><div style="font-family:Bebas Neue,sans-serif;font-size:40px;color:var(--gold);margin-bottom:18px">NBA <span style="color:var(--text)">Money Pool</span></div><div class="big-spinner" style="margin:0 auto 14px"></div><div style="font-size:16px;color:var(--text3)">Connecting...</div></div></div>';
+    app.innerHTML='<div class="full-screen"><div style="text-align:center"><div style="font-family:Bebas Neue,sans-serif;font-size:40px;color:var(--gold);margin-bottom:18px">NBA <span style="color:var(--text)">Moneyline Pool</span></div><div class="big-spinner" style="margin:0 auto 14px"></div><div style="font-size:16px;color:var(--text3)">Connecting...</div></div></div>';
     return;
   }
   if(!state.currentPlayer){app.innerHTML=renderLogin();attachLoginEvents();return;}
@@ -359,7 +359,7 @@ function render(){
   const ts=state.lastUpdated?new Date(state.lastUpdated).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
   app.innerHTML=`
     <div class="header">
-      <div class="header-logo">NBA <span>Money Pool</span> <span style="font-size:17px;color:var(--text3)">2026</span></div>
+      <div class="header-logo">NBA <span>Moneyline Pool</span> <span style="font-size:17px;color:var(--text3)">2026</span></div>
       <div class="header-right">
         ${ts?`<span style="font-size:13px;color:var(--text3)">${ts}</span>`:''}
         <button class="btn-sm" onclick="handleRefresh()">Refresh</button>
@@ -381,7 +381,7 @@ function render(){
 function renderLogin(){
   const has=state.players.length>0;
   return `<div class="full-screen"><div class="card-box" id="login-box">
-    <div class="logo">NBA <span>Money Pool</span></div>
+    <div class="logo">NBA <span>Moneyline Pool</span></div>
     <div class="sub">2026 Playoffs - Moneyline Pick'em</div>
     ${has?`
       <div class="field"><label>Your name</label><select id="login-select"><option value="">select</option>${state.players.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
@@ -400,7 +400,7 @@ function renderLogin(){
 }
 function showNewPlayerForm(){
   const b=document.getElementById('login-box');if(!b)return;
-  b.innerHTML=`<div class="logo">NBA <span>Money Pool</span></div><div class="sub">Create your account</div>
+  b.innerHTML=`<div class="logo">NBA <span>Moneyline Pool</span></div><div class="sub">Create your account</div>
     <div class="field"><label>Your name</label><input type="text" id="new-player-name" placeholder="Enter your name" autofocus/></div>
     <div class="field"><label>4-digit PIN</label><input type="password" inputmode="numeric" maxlength="4" id="new-player-pin" placeholder="e.g. 1234"/></div>
     <div class="field"><label>Confirm PIN</label><input type="password" inputmode="numeric" maxlength="4" id="new-player-pin2" placeholder="Re-enter PIN"/></div>
@@ -412,14 +412,20 @@ function attachLoginEvents(){document.getElementById('login-pin')?.addEventListe
 
 function renderBanner(standings){
   const pot=state.players.length*CONFIG.BUY_IN;
-  const done=state.series.filter(s=>s.status==='post').length;
   const leader=standings[0];
+  const rounds=[...new Set(state.series.map(s=>s.round))].sort();
+  const roundSummary=rounds.map(r=>{
+    const rs=state.series.filter(s=>s.round===r);
+    const done=rs.filter(s=>s.status==='post').length;
+    const names={1:'R1',2:'R2',3:'CF',4:'Finals'};
+    return`<div><div class="banner-val" style="font-size:28px">${done}/${rs.length}</div><div class="banner-lbl">${names[r]||'R'+r} Done</div></div>`;
+  }).join('');
   return `<div class="banner">
     <div><div class="banner-lbl">Prize Pool</div><div class="banner-val">$${pot}</div></div>
     <div class="banner-stats">
       <div><div class="banner-val" style="font-size:32px">${state.players.length}</div><div class="banner-lbl">Players</div></div>
-      <div><div class="banner-val" style="font-size:32px">${done}/${state.series.length}</div><div class="banner-lbl">Series Done</div></div>
-      ${leader?`<div><div class="banner-val" style="font-size:32px;color:var(--green)">${leader.winnings}pts</div><div class="banner-lbl">Leader - ${leader.name}</div></div>`:''}
+      ${roundSummary}
+      ${leader?`<div><div class="banner-val" style="font-size:28px;color:var(--green)">${leader.winnings} pts</div><div class="banner-lbl">Leader - ${leader.name}</div></div>`:''}
     </div>
   </div>`;
 }
@@ -449,7 +455,7 @@ function renderPickBlock(player,s){
           <span class="pick-btn-name">${team.name}</span>
           <span class="pick-btn-seed">#${team.seed} seed</span>
           <div class="pick-btn-odds ${oLbl.cls}">${oLbl.label}</div>
-          ${payout!=null?`<div class="pick-btn-payout">Win: <strong>${payout}pts</strong></div>`:''}
+          ${payout!=null?`<div class="pick-btn-payout">Win: <strong>${payout} pts</strong></div>`:''}
         </div>
       </div>
     </button>`;
@@ -482,7 +488,7 @@ function renderLeaderboard(standings){
       const gLabel=pk.games?' ('+pk.games+'g)':'';
       let cls='pending',bonus='';
       if(s.status==='post'&&s.winner){
-        if(s.winner===pk.team){const odds=s.team1.name===pk.team?s.odds1:s.odds2;let pay=calcPayout(odds);if(pay){const dbl=pk.games&&s.games&&pk.games===s.games;if(dbl)pay*=2;cls='won';bonus=' <span class="bonus">+'+pay+'pts</span>';}}
+        if(s.winner===pk.team){const odds=s.team1.name===pk.team?s.odds1:s.odds2;let pay=calcPayout(odds);if(pay){const dbl=pk.games&&s.games&&pk.games===s.games;if(dbl)pay*=2;cls='won';bonus=' <span class="bonus">+'+pay+' pts</span>';}}
         else{cls='lost';}
       }
       return'<span class="pick-chip '+cls+'">'+label+gLabel+bonus+'</span>';
@@ -491,7 +497,7 @@ function renderLeaderboard(standings){
     return`<div class="lb-card ${p.id===myId?'is-me':''} rank-${i+1}">
       <div class="lb-rank">#${i+1}</div>
       <div class="lb-name">${p.name}</div>
-      <div class="lb-winnings ${p.winnings===0?'zero':''}">${p.winnings}pts</div>
+      <div class="lb-winnings ${p.winnings===0?'zero':''}">${p.winnings} pts</div>
       <div class="lb-sub">${settled} settled</div>
       ${chips?`<div class="lb-picks-row">${chips}</div>`:''}
     </div>`;
@@ -524,10 +530,10 @@ function renderSeriesCard(s,player){
     const odds=s.team1?.name===myPick.team?s.odds1:s.odds2;
     const pay=calcPayout(odds);const gStr=myPick.games?' in '+myPick.games:'';
     if(s.status==='post'&&s.winner){
-      if(s.winner===myPick.team){const dbl=myPick.games&&s.games&&myPick.games===s.games;const fp=pay?(dbl?pay*2:pay):'?';myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong><br><span class="result-won">+${fp}pts${dbl?' (2x!)':''}</span></span>`;}
+      if(s.winner===myPick.team){const dbl=myPick.games&&s.games&&myPick.games===s.games;const fp=pay?(dbl?pay*2:pay):'?';myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong><br><span class="result-won">+${fp} pts${dbl?' (2x!)':''}</span></span>`;}
       else{myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong><br><span class="result-lost">Lost</span></span>`;}
     }else{
-      myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong>${pay?`<br>Potential: ${pay}pts${myPick.games?' ('+pay*2+'pts if '+myPick.games+'g)':''}`:''}`;
+      myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong>${pay?`<br>Potential: ${pay} pts${myPick.games?' ('+pay*2+' pts if '+myPick.games+'g)':''}`:''}`;
     }
   }
   const adminBlock=state.isAdmin?`<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(240,85,85,.15)">
