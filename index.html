@@ -485,8 +485,14 @@ function renderLeaderboard(standings){
   const myId=state.currentPlayer;
   return `<div class="section-hdr"><div class="section-title">Leaderboard</div></div>
   <div class="lb-grid">${standings.length?standings.map((p,i)=>{
+    const isMe=p.id===myId;
     const chips=(p.picks||[]).map(pk=>{
       const s=state.series.find(x=>x.id===pk.seriesId);if(!s)return'';
+      // Hide picks from other players until the series locks (goes live or finishes)
+      const seriesLocked=s.status==='live'||s.status==='post';
+      if(!isMe&&!state.isAdmin&&!seriesLocked){
+        return'<span class="pick-chip pending" title="Picks hidden until series locks">🔒 Locked</span>';
+      }
       const label=pk.team.split(' ').pop();
       const gLabel=pk.games?' ('+pk.games+'g)':'';
       let cls='pending',bonus='';
@@ -495,14 +501,19 @@ function renderLeaderboard(standings){
         else{cls='lost';}
       }
       return'<span class="pick-chip '+cls+'">'+label+gLabel+bonus+'</span>';
-    }).join('');
+    });
+    // Deduplicate locked chips — just show one "N picks submitted" badge instead of N lock icons
+    const lockedCount=chips.filter(c=>c.includes('🔒')).length;
+    const visibleChips=chips.filter(c=>!c.includes('🔒'));
+    const submittedBadge=lockedCount>0?`<span class="pick-chip pending" title="Picks hidden until series locks">🔒 ${lockedCount} pick${lockedCount>1?'s':''} submitted</span>`:'';
+    const allChips=[submittedBadge,...visibleChips].filter(Boolean).join('');
     const settled=(p.picks||[]).filter(pk=>{const s=state.series.find(x=>x.id===pk.seriesId);return s&&s.status==='post';}).length;
-    return`<div class="lb-card ${p.id===myId?'is-me':''} rank-${i+1}">
+    return`<div class="lb-card ${isMe?'is-me':''} rank-${i+1}">
       <div class="lb-rank">#${i+1}</div>
       <div class="lb-name">${p.name}</div>
       <div class="lb-winnings ${p.winnings===0?'zero':''}">${p.winnings} pts</div>
       <div class="lb-sub">${settled} settled</div>
-      ${chips?`<div class="lb-picks-row">${chips}</div>`:''}
+      ${allChips?`<div class="lb-picks-row">${allChips}</div>`:''}
     </div>`;
   }).join(''):`<div class="empty">No players yet.</div>`}</div>`;
 }
