@@ -192,6 +192,15 @@ const CONFIG={
   REFRESH_INTERVAL:120000
 };
 let state={players:[],series:[],currentPlayer:null,currentPin:null,isAdmin:false,lastUpdated:null,loading:true};
+
+// Hardcoded seed lookup — overrides ESPN which drops seeds for live games
+const TEAM_SEEDS = {
+  // East
+  'DET':1,'ORL':8,'BOS':2,'PHI':7,'NYK':3,'NY':3,'ATL':6,'CLE':4,'TOR':5,
+  // West
+  'OKC':1,'PHX':8,'SAS':2,'POR':7,'DEN':3,'MIN':6,'LAL':4,'HOU':5
+};
+function getSeed(abbrev){ return TEAM_SEEDS[abbrev] || '?'; }
 let pendingPicks={};
 
 function calcPayout(odds){if(!odds&&odds!==0)return null;return odds>0?odds:Math.round(10000/Math.abs(odds));}
@@ -563,7 +572,7 @@ function renderSeriesCard(s,player){
     <div class="series-round">${s.roundName} - ${s.conf}</div>
     <div class="matchup">
       <div class="matchup-team">
-        <div class="team-seed">#${s.team1?.seed||'?'}</div>
+        <div class="team-seed">#${getSeed(s.team1?.abbrev)||s.team1?.seed||'?'}</div>
         <div class="team-logo-wrap">${s.team1?.logo?`<img src="${s.team1.logo}" onerror="this.style.display='none'">`:'<div style="width:48px;height:48px"></div>'}</div>
         <div class="team-name ${t1w?'winner':s.winner&&!t1w?'loser':''}">${s.team1?.abbrev||'TBD'}</div>
         <div class="team-odds ${o1.cls}">${o1.label}</div>
@@ -574,7 +583,7 @@ function renderSeriesCard(s,player){
         ${s.status==='post'&&s.games?`<div class="series-wins">${s.games} games</div>`:''}
       </div>
       <div class="matchup-team">
-        <div class="team-seed">#${s.team2?.seed||'?'}</div>
+        <div class="team-seed">#${getSeed(s.team2?.abbrev)||s.team2?.seed||'?'}</div>
         <div class="team-logo-wrap">${s.team2?.logo?`<img src="${s.team2.logo}" onerror="this.style.display='none'">`:'<div style="width:48px;height:48px"></div>'}</div>
         <div class="team-name ${t2w?'winner':s.winner&&!t2w?'loser':''}">${s.team2?.abbrev||'TBD'}</div>
         <div class="team-odds ${o2.cls}">${o2.label}</div>
