@@ -78,7 +78,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .pick-chip.pending{background:rgba(240,192,64,.08);border-color:rgba(240,192,64,.2);color:var(--gold)}
 .pick-chip .bonus{color:var(--gold);margin-left:2px}
 
-.series-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-bottom:8px}
+.series-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:8px}
 .series-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;transition:border-color .2s}
 .series-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
 .series-card.status-pre::before{background:var(--text3)}
@@ -88,7 +88,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .series-round{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px}
 .matchup{display:flex;align-items:center;gap:12px}
 .matchup-team{flex:1;text-align:center}
-.team-seed{font-size:12px;color:var(--text3);margin-bottom:4px}
+.team-seed{font-size:15px;font-weight:700;color:var(--text2);margin-bottom:4px}
 .team-logo-wrap{height:48px;display:flex;align-items:center;justify-content:center;margin-bottom:6px}
 .team-logo-wrap img{width:48px;height:48px;object-fit:contain}
 .team-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.03em;line-height:1.1;color:#fff}
@@ -494,7 +494,7 @@ function renderLeaderboard(standings){
         return'<span class="pick-chip pending" title="Picks hidden until series locks">🔒 Locked</span>';
       }
       const label=pk.team.split(' ').pop();
-      const gLabel=pk.games?' ('+pk.games+'g)':'';
+      const gLabel=pk.games?' ('+pk.games+'gms)':'';
       let cls='pending',bonus='';
       if(s.status==='post'&&s.winner){
         if(s.winner===pk.team){const odds=s.team1.name===pk.team?s.odds1:s.odds2;let pay=calcPayout(odds);if(pay){const dbl=pk.games&&s.games&&pk.games===s.games;if(dbl)pay*=2;pay=applyMultiplier(pay,s.round);cls='won';bonus=' <span class="bonus">+'+pay+' pts</span>';}}
@@ -538,16 +538,16 @@ function renderSeriesCard(s,player){
   const t1w=s.winner&&s.winner===s.team1?.name;
   const t2w=s.winner&&s.winner===s.team2?.name;
   const o1=oddsLabel(s.odds1);const o2=oddsLabel(s.odds2);
-  const badgeLabel={pre:'Upcoming',live:'Live - picks locked',post:'Final',tbd:'TBD'};
+  const badgeLabel={pre:'Upcoming',live:'Live — Picks 🔒',post:'Final',tbd:'TBD'};
   let myPickHtml='';
   if(myPick){
     const odds=s.team1?.name===myPick.team?s.odds1:s.odds2;
-    const pay=calcPayout(odds);const gStr=myPick.games?' in '+myPick.games:'';
+    const pay=calcPayout(odds);const gStr=myPick.games?' in '+myPick.games+'gms':'';
     if(s.status==='post'&&s.winner){
       if(s.winner===myPick.team){const dbl=myPick.games&&s.games&&myPick.games===s.games;let fp=pay?(dbl?pay*2:pay):'?';if(fp!=='?')fp=applyMultiplier(fp,s.round);const mx=roundMultiplier(s.round);myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong><br><span class="result-won">+${fp} pts${dbl?' (2x!)':''}${mx>1?' ('+mx+'x)':''}</span></span>`;}
       else{myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong><br><span class="result-lost">Lost</span></span>`;}
     }else{
-      const mx=roundMultiplier(s.round);const mpay=pay?applyMultiplier(pay,s.round):null;const mpay2=pay?applyMultiplier(pay*2,s.round):null;myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong>${mpay?`<br>Potential: ${mpay} pts${myPick.games?' ('+mpay2+' pts if '+myPick.games+'g)':''}${mx>1?' · '+mx+'x':''}`:''}${!myPick.games&&mpay?'':''}`;
+      const mx=roundMultiplier(s.round);const mpay=pay?applyMultiplier(pay,s.round):null;const mpay2=pay?applyMultiplier(pay*2,s.round):null;myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong>${mpay?`<br>Potential: ${mpay} pts${myPick.games?' ('+mpay2+' pts if '+myPick.games+'gms)':''}${mx>1?' · '+mx+'x':''}`:''}${!myPick.games&&mpay?'':''}`;
     }
   }
   const adminBlock=state.isAdmin?`<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(240,85,85,.15)">
@@ -607,7 +607,7 @@ function renderAdminPanel(){
     const pickList=picks.length?picks.map(pk=>{
       const s=state.series.find(x=>x.id===pk.seriesId);
       const sName=s?s.team1.abbrev+' vs '+s.team2.abbrev:pk.seriesId;
-      const gStr=pk.games?' in '+pk.games:'';
+      const gStr=pk.games?' in '+pk.games+'gms':'';
       return'<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);gap:8px">'+
         '<span style="font-size:13px;color:var(--text2)">'+sName+': <strong style="color:var(--text)">'+pk.team.split(' ').pop()+gStr+'</strong></span>'+
         '<button class="btn-danger" style="padding:4px 10px;font-size:12px" onclick="adminDeletePick(&quot;'+p.id+'&quot;,&quot;'+pk.seriesId+'&quot;)">Delete</button>'+
