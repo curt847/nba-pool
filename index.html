@@ -77,12 +77,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .pick-chip.lost{background:rgba(240,85,85,.08);border-color:rgba(240,85,85,.2);color:var(--red);text-decoration:line-through}
 .pick-chip.pending{background:rgba(240,192,64,.08);border-color:rgba(240,192,64,.2);color:var(--gold)}
 .pick-chip .bonus{color:var(--gold);margin-left:2px}
-.pick-chip.live-winning{background:rgba(34,212,122,.12);border-color:rgba(34,212,122,.35);color:#4fffaa}
-.pick-chip.live-losing{background:rgba(240,85,85,.12);border-color:rgba(240,85,85,.35);color:#ff7070}
-.pick-chip.live-tied{background:rgba(180,180,180,.1);border-color:rgba(180,180,180,.25);color:#ccc}
-.pick-chip.live-upcoming{background:rgba(240,192,64,.06);border-color:rgba(240,192,64,.15);color:var(--text3)}
+.pick-chip.live-winning{background:transparent;border-color:rgba(34,212,122,.6);color:var(--green)}
+.pick-chip.live-losing{background:transparent;border-color:rgba(240,85,85,.6);color:var(--red)}
+.pick-chip.live-tied{background:transparent;border-color:rgba(180,180,180,.4);color:#aaa}
+.pick-chip.live-upcoming{background:transparent;border-color:var(--border);color:var(--text3)}
 .lb-live-status{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:12px;font-weight:700}
-.lls-win{color:#4fffaa}.lls-lose{color:#ff7070}.lls-tied{color:#aaa}.lls-upcoming{color:var(--text3)}
+.lls-win{color:#fff}.lls-lose{color:#fff}.lls-tied{color:#fff}.lls-upcoming{color:var(--text2)}
 
 .series-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:8px}
 .series-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;transition:border-color .2s}
@@ -105,7 +105,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .team-name.winner{color:var(--green)}
 .team-name.loser{color:var(--text3);text-decoration:line-through}
 .matchup-vs{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text3)}
-.series-wins{font-size:26px;font-family:'Bebas Neue',sans-serif;color:#fff;text-align:center;margin-top:2px;letter-spacing:.04em}
+.series-wins{font-size:42px;font-family:'Bebas Neue',sans-serif;color:#fff;text-align:center;margin-top:0;line-height:1;letter-spacing:.04em}
 .series-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
 .series-badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:.06em}
 .badge-pre{background:rgba(74,88,112,.2);color:var(--text3)}
@@ -523,7 +523,7 @@ function renderLeaderboard(standings){
       const gLabel=pk.games?' ('+pk.games+'gms)':'';
       let cls='pending',bonus='';
       if(s.status==='post'&&s.winner){
-        if(s.winner===pk.team){const odds=s.team1.name===pk.team?s.odds1:s.odds2;let pay=calcPayout(odds);if(pay){const dbl=pk.games&&s.games&&pk.games===s.games;if(dbl)pay*=2;pay=applyMultiplier(pay,s.round);cls='won';bonus=' <span class="bonus">+'+pay+' pts</span>';}}
+        if(s.winner===pk.team){const odds=s.team1.name===pk.team?s.odds1:s.odds2;let pay=calcPayout(odds);if(pay){const dbl=pk.games&&s.games&&pk.games===s.games;if(dbl)pay*=2;pay=applyMultiplier(pay,s.round);const starBadge=pk.games&&s.games&&pk.games===s.games?' ⭐':'';cls='won';bonus=starBadge+' <span class="bonus">+'+pay+' pts</span>';}}
         else{cls='lost';}
       } else if(s.status==='live') {
         const liveStatus=getLivePickStatus(pk,s);
@@ -542,17 +542,17 @@ function renderLeaderboard(standings){
     const submittedBadge=lockedCount>0?`<span class="pick-chip live-upcoming" title="Picks hidden until series locks">🔒 ${lockedCount} pick${lockedCount>1?'s':''} submitted</span>`:'';
     const allChips=[submittedBadge,...visibleChips].filter(Boolean).join('');
     // Build live status summary (only for visible picks on live series)
-    const livePicks=(p.picks||[]).filter(pk=>{const s=state.series.find(x=>x.id===pk.seriesId);return s&&s.status==='live'&&(isMe||state.isAdmin);});
+    const livePicks=(p.picks||[]).filter(pk=>{const s=state.series.find(x=>x.id===pk.seriesId);return s&&s.status==='live';});
     const liveWin=livePicks.filter(pk=>getLivePickStatus(pk,state.series.find(x=>x.id===pk.seriesId))==='winning').length;
     const liveLose=livePicks.filter(pk=>getLivePickStatus(pk,state.series.find(x=>x.id===pk.seriesId))==='losing').length;
     const liveTied=livePicks.filter(pk=>getLivePickStatus(pk,state.series.find(x=>x.id===pk.seriesId))==='tied').length;
     const liveUpcoming=(p.picks||[]).filter(pk=>{const s=state.series.find(x=>x.id===pk.seriesId);return s&&s.status==='pre';}).length;
     const liveSummaryParts=[];
     if(liveWin>0) liveSummaryParts.push(`<span class="lls-win">▲ ${liveWin} Winning</span>`);
-    if(liveTied>0) liveSummaryParts.push(`<span class="lls-tied">— ${liveTied} Tied</span>`);
     if(liveLose>0) liveSummaryParts.push(`<span class="lls-lose">▼ ${liveLose} Losing</span>`);
-    if(liveUpcoming>0) liveSummaryParts.push(`<span class="lls-upcoming">· ${liveUpcoming} Upcoming</span>`);
-    const liveSummary=liveSummaryParts.length?`<div class="lb-live-status">${liveSummaryParts.join(' ')}</div>`:'';
+    if(liveTied>0) liveSummaryParts.push(`<span class="lls-tied">${liveTied} Tied</span>`);
+    if(liveUpcoming>0) liveSummaryParts.push(`<span class="lls-upcoming">${liveUpcoming} Upcoming</span>`);
+    const liveSummary=liveSummaryParts.length?`<div class="lb-live-status">${liveSummaryParts.join(' <span style="color:var(--text3)">·</span> ')}</div>`:'';
     const settled=(p.picks||[]).filter(pk=>{const s=state.series.find(x=>x.id===pk.seriesId);return s&&s.status==='post';}).length;
     return`<div class="lb-card ${isMe?'is-me':''} rank-${i+1}">
       <div class="lb-rank">#${i+1}</div>
