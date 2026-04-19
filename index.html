@@ -242,7 +242,30 @@ function apiCall(action,payload){
 
 async function init(){render();await loadState();render();setInterval(async()=>{await loadState();render();},CONFIG.REFRESH_INTERVAL);}
 async function loadState(){
-  try{const d=await apiCall('getState');state.players=d.players||[];state.series=d.series||[];state.lastUpdated=d.lastUpdated||null;}
+  try{
+    const d=await apiCall('getState');
+    // Preserve current player's locally-known picks in case API doesn't echo them back
+    const prevPlayer=state.currentPlayer?state.players.find(p=>p.id===state.currentPlayer):null;
+    const prevPicks=prevPlayer?.picks||[];
+    state.players=d.players||[];
+    // Deduplicate series: ESPN sometimes returns the same matchup twice with different IDs.
+    // Keep the first occurrence of each unique team1+team2 pairing per conference+round.
+    const rawSeries=d.series||[];
+    const seen=new Set();
+    state.series=rawSeries.filter(s=>{
+      const key=[s.conf,s.round,
+        [s.team1?.abbrev,s.team2?.abbrev].sort().join('_')
+      ].join('|');
+      if(seen.has(key))return false;
+      seen.add(key);return true;
+    });
+    state.lastUpdated=d.lastUpdated||null;
+    // If the API returned the current player with no picks but we had them locally, restore them
+    if(state.currentPlayer&&prevPicks.length){
+      const cp=state.players.find(p=>p.id===state.currentPlayer);
+      if(cp&&(!cp.picks||!cp.picks.length))cp.picks=prevPicks;
+    }
+  }
   catch(e){showToast('Refresh failed: '+e.message,'error');}
   state.loading=false;
 }
