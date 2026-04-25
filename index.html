@@ -269,7 +269,7 @@ async function handleSyncScores(){
   const btn=document.getElementById('sync-btn');
   if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Syncing...';}
   try{
-    await apiCall('adminSyncScores',{});
+    await apiCall('syncScores',{});
     await loadState();
     render();
     showToast('Scores synced from ESPN!','success');
