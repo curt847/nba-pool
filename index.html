@@ -598,12 +598,12 @@ function renderLeaderboard(standings){
 }
 
 function renderSeriesSection(conf){
-  const rounds=[...new Set(state.series.filter(s=>s.conf===conf).map(s=>s.round))].sort();
+  const rounds=[...new Set(state.series.filter(s=>s.conf===conf&&!(s.team1?.abbrev==='TBD'&&s.team2?.abbrev==='TBD')).map(s=>s.round))].sort();
   const player=state.players.find(p=>p.id===state.currentPlayer);
   if(!rounds.length)return`<div class="section-hdr"><div class="section-title">${conf}ern Conference</div><span class="conf-tag tag-${conf==='East'?'e':'w'}">${conf}</span></div><div class="empty">Awaiting playoff data...</div>`;
   return`<div class="section-hdr"><div class="section-title">${conf}ern Conference</div><span class="conf-tag tag-${conf==='East'?'e':'w'}">${conf}</span></div>
   ${rounds.map(r=>{
-    const rs=state.series.filter(s=>s.conf===conf&&s.round===r);
+    const rs=state.series.filter(s=>s.conf===conf&&s.round===r&&!(s.team1?.abbrev==='TBD'&&s.team2?.abbrev==='TBD'));
     const rName=rs[0]?.roundName||'Round '+r;
     return`<div style="margin-bottom:8px;font-size:13px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-weight:700">${rName}</div>
     <div class="series-grid" style="margin-bottom:24px">${rs.map(s=>renderSeriesCard(s,player)).join('')}</div>`;
