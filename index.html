@@ -73,8 +73,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .lb-sub{font-size:13px;color:var(--text2);margin-top:3px;margin-bottom:10px}
 .lb-picks-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;border-top:1px solid var(--border);padding-top:10px}
 .pick-chip{font-size:12px;font-weight:600;padding:4px 9px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);display:flex;align-items:center;gap:4px}
-.pick-chip.won{background:rgba(34,212,122,.08);border-color:rgba(34,212,122,.25);color:var(--green)}
-.pick-chip.lost{background:rgba(240,85,85,.08);border-color:rgba(240,85,85,.2);color:var(--red);text-decoration:line-through}
+.pick-chip.won{background:var(--green);border-color:var(--green);color:#fff}
+.pick-chip.lost{background:var(--red);border-color:var(--red);color:#000;text-decoration:line-through}
 .pick-chip.pending{background:rgba(240,192,64,.08);border-color:rgba(240,192,64,.2);color:var(--gold)}
 .pick-chip .bonus{color:var(--gold);margin-left:2px}
 .pick-chip.live-winning{background:transparent;border-color:rgba(34,212,122,.6);color:var(--green)}
@@ -555,7 +555,7 @@ function renderLeaderboard(standings){
       const gLabel=pk.games?' ('+pk.games+'gms)':'';
       let cls='pending',bonus='';
       if(s.status==='post'&&s.winner){
-        if(s.winner===pk.team){const odds=s.team1.name===pk.team?s.odds1:s.odds2;let pay=calcPayout(odds);if(pay){const dbl=pk.games&&s.games&&pk.games===s.games;if(dbl)pay*=2;pay=applyMultiplier(pay,s.round);const starBadge=pk.games&&s.games&&pk.games===s.games?' ⭐':'';cls='won';bonus=starBadge+' <span class="bonus">+'+pay+' pts</span>';}}
+        if(s.winner===pk.team){const odds=s.team1.name===pk.team?s.odds1:s.odds2;let pay=calcPayout(odds);if(pay){const dbl=pk.games&&s.games&&pk.games===s.games;if(dbl)pay*=2;pay=applyMultiplier(pay,s.round);const starBadge=pk.games&&s.games&&pk.games===s.games?' ⭐':'';cls='won';bonus=starBadge+' +'+pay+' pts';}}
         else{cls='lost';}
       } else if(s.status==='live') {
         const liveStatus=getLivePickStatus(pk,s);
