@@ -248,6 +248,8 @@ async function loadState(){
     const rawSeries=d.series||[];
     const seen=new Set();
     state.series=rawSeries.filter(s=>{
+      // Only deduplicate when both teams are known — TBD slots are always kept as-is
+      if(s.team1?.abbrev==='TBD'||s.team2?.abbrev==='TBD')return true;
       const key=[s.conf,s.round,
         [s.team1?.abbrev,s.team2?.abbrev].sort().join('_')
       ].join('|');
