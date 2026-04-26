@@ -392,16 +392,6 @@ async function adminRemovePlayer(pid){
 }
 
 function getPlayerPick(player,sid){return(player?.picks||[]).find(pk=>pk.seriesId===sid)||null;}
-function calcLiveWinning(player){
-  return (player.picks||[]).filter(pk=>{
-    const s=state.series.find(x=>x.id===pk.seriesId);
-    if(!s||s.status!=='live')return false;
-    const myTeamIsT1=s.team1.name===pk.team;
-    const myWins=myTeamIsT1?(s.team1.wins||0):(s.team2.wins||0);
-    const oppWins=myTeamIsT1?(s.team2.wins||0):(s.team1.wins||0);
-    return myWins>oppWins;
-  }).length;
-}
 function calcLivePotential(player){
   return (player.picks||[]).reduce((total,pk)=>{
     const s=state.series.find(x=>x.id===pk.seriesId);
@@ -416,7 +406,7 @@ function calcLivePotential(player){
     return total+applyMultiplier(pay,s.round);
   },0);
 }
-function getStandings(){return state.players.map(p=>({...p,winnings:calcWinnings(p),liveWinning:calcLiveWinning(p),livePotential:calcLivePotential(p)})).sort((a,b)=>b.winnings-a.winnings||b.liveWinning-a.liveWinning||b.livePotential-a.livePotential);}
+function getStandings(){return state.players.map(p=>({...p,winnings:calcWinnings(p),livePotential:calcLivePotential(p)})).sort((a,b)=>b.winnings-a.winnings||b.livePotential-a.livePotential);}
 function oddsLabel(o){return(!o&&o!==0)?{label:'TBD',cls:'na'}:{label:(o>0?'+':'')+o,cls:o<0?'fav':'dog'};}
 function safeName(n){return(n||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 
