@@ -402,7 +402,21 @@ function calcLiveWinning(player){
     return myWins>oppWins;
   }).length;
 }
-function getStandings(){return state.players.map(p=>({...p,winnings:calcWinnings(p),liveWinning:calcLiveWinning(p)})).sort((a,b)=>b.winnings-a.winnings||b.liveWinning-a.liveWinning);}
+function calcLivePotential(player){
+  return (player.picks||[]).reduce((total,pk)=>{
+    const s=state.series.find(x=>x.id===pk.seriesId);
+    if(!s||s.status!=='live')return total;
+    const myTeamIsT1=s.team1.name===pk.team;
+    const myWins=myTeamIsT1?(s.team1.wins||0):(s.team2.wins||0);
+    const oppWins=myTeamIsT1?(s.team2.wins||0):(s.team1.wins||0);
+    if(myWins<=oppWins)return total; // only count series player is currently winning
+    const odds=myTeamIsT1?s.odds1:s.odds2;
+    const pay=calcPayout(odds);
+    if(!pay)return total;
+    return total+applyMultiplier(pay,s.round);
+  },0);
+}
+function getStandings(){return state.players.map(p=>({...p,winnings:calcWinnings(p),liveWinning:calcLiveWinning(p),livePotential:calcLivePotential(p)})).sort((a,b)=>b.winnings-a.winnings||b.liveWinning-a.liveWinning||b.livePotential-a.livePotential);}
 function oddsLabel(o){return(!o&&o!==0)?{label:'TBD',cls:'na'}:{label:(o>0?'+':'')+o,cls:o<0?'fav':'dog'};}
 function safeName(n){return(n||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
 
