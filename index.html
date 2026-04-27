@@ -427,6 +427,7 @@ function render(){
       <div class="header-logo">NBA <span>Moneyline Pool</span> <span style="font-size:17px;color:var(--text3)">2026</span></div>
       <div class="header-right">
         ${ts?`<span style="font-size:13px;color:var(--text3)">${ts}</span>`:''}
+        <button class="btn-sm" onclick="showRulesModal()" style="color:var(--gold);border-color:rgba(240,192,64,.3)">📋 Rules</button>
         <button class="btn-sm" onclick="handleRefresh()">Refresh</button>
         ${state.isAdmin ? `<button class="btn-sm" id="sync-btn" onclick="handleSyncScores()" style="color:var(--gold);border-color:rgba(240,192,64,.4)">Sync Scores</button>` : ''}
         <span class="player-badge" onclick="handleLogout()">${player?.name||''} x</span>
@@ -441,8 +442,56 @@ function render(){
       ${renderSeriesSection('East')}
       ${renderSeriesSection('West')}
     </div>
-    ${renderAdminModal()}`;
+    ${renderAdminModal()}
+    ${renderRulesModal()}`;
 }
+
+function renderRulesModal(){
+  return`<div class="modal-overlay" id="rules-modal" style="display:none" onclick="if(event.target===this)closeRulesModal()">
+    <div class="modal-box" style="max-width:520px">
+      <div class="modal-title">📋 Scoring Rules</div>
+      <div style="display:flex;flex-direction:column;gap:14px;font-size:15px;color:var(--text2);line-height:1.6">
+        <div>
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--text3);margin-bottom:6px">Buy In</div>
+          <div>Each player puts in <strong style="color:var(--text)">$${CONFIG.BUY_IN}</strong>. Winner takes the pool.</div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--text3);margin-bottom:6px">Base Pick Payout</div>
+          <div>Simulated <strong style="color:var(--text)">$100 bet</strong> at the series moneyline odds, <strong style="color:var(--text)">plus your $100 stake back</strong>. Examples:</div>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;font-size:14px">
+            <div style="display:flex;justify-content:space-between"><span style="color:#ff7070">-500 favorite</span><span style="color:var(--text)">100 + 20 = <strong>120 pts</strong></span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#ff7070">-150 favorite</span><span style="color:var(--text)">100 + 67 = <strong>167 pts</strong></span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#3ddd88">+110 underdog</span><span style="color:var(--text)">100 + 110 = <strong>210 pts</strong></span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#3ddd88">+380 underdog</span><span style="color:var(--text)">100 + 380 = <strong>480 pts</strong></span></div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--text3);margin-bottom:6px">Correct Game Count Bonus</div>
+          <div>Guess the right number of games and your total payout is <strong style="color:var(--text)">1.5x</strong> (a 50% increase). The bonus scales with the odds — picking the right game count for a dog win pays more than for a favorite win.</div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--text3);margin-bottom:6px">Round Multipliers</div>
+          <div style="display:flex;flex-direction:column;gap:4px;font-size:14px">
+            <div style="display:flex;justify-content:space-between"><span>First Round</span><span style="color:var(--text)"><strong>1x</strong></span></div>
+            <div style="display:flex;justify-content:space-between"><span>Second Round</span><span style="color:var(--text)"><strong>1.1x</strong></span></div>
+            <div style="display:flex;justify-content:space-between"><span>Conference Finals</span><span style="color:var(--text)"><strong>1.25x</strong></span></div>
+            <div style="display:flex;justify-content:space-between"><span>NBA Finals</span><span style="color:var(--text)"><strong>1.5x</strong></span></div>
+          </div>
+          <div style="margin-top:8px;font-size:13px">Round multipliers apply to the full payout including any games bonus.</div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--text3);margin-bottom:6px">Pick Locking</div>
+          <div>Picks lock the moment a series goes <strong style="color:var(--gold)">Live</strong>. Other players' picks are hidden until a series locks.</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" style="padding:11px;margin:0" onclick="closeRulesModal()">Got It</button>
+      </div>
+    </div>
+  </div>`;
+}
+function showRulesModal(){document.getElementById('rules-modal').style.display='flex';}
+function closeRulesModal(){document.getElementById('rules-modal').style.display='none';}
 
 function renderLogin(){
   const has=state.players.length>0;
@@ -606,7 +655,7 @@ function renderLeaderboard(standings){
       <div class="lb-rank">#${i+1}</div>
       <div class="lb-name">${p.name}</div>
       <div class="lb-winnings ${p.winnings===0?'zero':''}">${p.winnings} pts</div>
-      <div class="lb-sub">${settled} settled</div>
+      <div class="lb-sub">${settled} settled${p.livePotential>0?` &nbsp;·&nbsp; <span style="color:var(--text3);font-size:12px">if winning: ${p.winnings+p.livePotential} pts</span>`:''}</div>
       ${allChips?`<div class="lb-picks-row">${allChips}</div>`:''}
       ${liveSummary}
     </div>`;
