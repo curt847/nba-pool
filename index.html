@@ -204,7 +204,7 @@ let state={players:[],series:[],currentPlayer:null,currentPin:null,isAdmin:false
 function getSeed(abbrev, teamObj){ return (teamObj && teamObj.seed && teamObj.seed !== '?') ? teamObj.seed : '?'; }
 let pendingPicks={};
 
-function calcPayout(odds){if(!odds&&odds!==0)return null;return odds>0?odds:Math.round(10000/Math.abs(odds));}
+function calcPayout(odds){if(!odds&&odds!==0)return null;return (odds>0?odds:Math.round(10000/Math.abs(odds)))+100;}
 function roundMultiplier(round){return {1:1, 2:1.1, 3:1.25, 4:1.5}[round]||1;}
 function applyMultiplier(pts, round){return Math.round(pts * roundMultiplier(round));}
 function calcWinnings(player){
@@ -214,7 +214,7 @@ function calcWinnings(player){
     if(!s||s.status!=='post'||!s.winner||s.winner!==pk.team)return;
     const odds=s.team1.name===pk.team?s.odds1:s.odds2;
     const pay=calcPayout(odds);if(!pay)return;
-    const base=(pk.games&&s.games&&pk.games===s.games)?pay*2:pay;
+    const base=(pk.games&&s.games&&pk.games===s.games)?Math.round(pay*1.5):pay;
     total+=applyMultiplier(base, s.round);
   });
   return total;
@@ -503,7 +503,7 @@ function renderPickPanel(player){
   const hasAny=Object.values(pendingPicks).some(p=>p.team);
   return `<div class="pick-panel" id="pick-panel">
     <div class="pick-panel-title">Make Your Picks</div>
-    <div class="pick-panel-sub">Pick the series winner. Correct game count = 2x payout! Picks lock when a series goes Live.<br><span style="color:var(--gold);font-size:13px">Round bonuses: R1 = 1x &nbsp;·&nbsp; R2 = 1.1x &nbsp;·&nbsp; Conf Finals = 1.25x &nbsp;·&nbsp; NBA Finals = 1.5x</span></div>
+    <div class="pick-panel-sub">Pick the series winner. Correct game count = +50% bonus! Picks lock when a series goes Live.<br><span style="color:var(--gold);font-size:13px">Round bonuses: R1 = 1x &nbsp;·&nbsp; R2 = 1.1x &nbsp;·&nbsp; Conf Finals = 1.25x &nbsp;·&nbsp; NBA Finals = 1.5x</span></div>
     ${unpicked.map(s=>renderPickBlock(player,s)).join('')}
     ${hasAny?`<div class="submit-row"><button class="btn-submit" onclick="submitAllPicks()">Submit Picks</button></div>`:''}
   </div>`;
@@ -530,7 +530,7 @@ function renderPickBlock(player,s){
     ${!s.odds1?`<div class="odds-warning">Odds not yet entered by commissioner</div>`:''}
     <div class="pick-teams">${mkBtn(s.team1,o1,p1)}${mkBtn(s.team2,o2,p2)}</div>
     <div class="games-row">
-      <span class="games-label">Games: <span style="color:var(--text2);font-size:13px;font-weight:400">(optional - correct = 2x payout)</span></span>
+      <span class="games-label">Games: <span style="color:var(--text2);font-size:13px;font-weight:400">(optional - correct = +50% bonus)</span></span>
       <div class="games-btns">${[4,5,6,7].map(g=>`<button class="game-btn ${pend.games===g?'selected':''}" onclick="togglePickGames('${s.id}',${g})">${g}</button>`).join('')}</div>
     </div>
   </div>`;
@@ -541,7 +541,7 @@ function refreshPickPanel(){
   const player=state.players.find(p=>p.id===state.currentPlayer);
   const unpicked=state.series.filter(s=>s.status==='pre'&&s.team1?.abbrev!=='TBD'&&s.team2?.abbrev!=='TBD'&&!getPlayerPick(player,s.id));
   const hasAny=Object.values(pendingPicks).some(p=>p.team);
-  panel.innerHTML=`<div class="pick-panel-title">Make Your Picks</div><div class="pick-panel-sub">Pick the series winner. Correct game count = 2x payout! Picks lock when a series goes Live.<br><span style="color:var(--gold);font-size:13px">Round bonuses: R1 = 1x &nbsp;·&nbsp; R2 = 1.1x &nbsp;·&nbsp; Conf Finals = 1.25x &nbsp;·&nbsp; NBA Finals = 1.5x</span></div>${unpicked.map(s=>renderPickBlock(player,s)).join('')}${hasAny?`<div class="submit-row"><button class="btn-submit" onclick="submitAllPicks()">Submit Picks</button></div>`:''}`;
+  panel.innerHTML=`<div class="pick-panel-title">Make Your Picks</div><div class="pick-panel-sub">Pick the series winner. Correct game count = +50% bonus! Picks lock when a series goes Live.<br><span style="color:var(--gold);font-size:13px">Round bonuses: R1 = 1x &nbsp;·&nbsp; R2 = 1.1x &nbsp;·&nbsp; Conf Finals = 1.25x &nbsp;·&nbsp; NBA Finals = 1.5x</span></div>${unpicked.map(s=>renderPickBlock(player,s)).join('')}${hasAny?`<div class="submit-row"><button class="btn-submit" onclick="submitAllPicks()">Submit Picks</button></div>`:''}`;
 }
 
 function renderLeaderboard(standings){
@@ -571,7 +571,7 @@ function renderLeaderboard(standings){
       const gLabel=pk.games?' ('+pk.games+'gms)':'';
       let cls='pending',bonus='';
       if(s.status==='post'&&s.winner){
-        if(s.winner===pk.team){const odds=s.team1.name===pk.team?s.odds1:s.odds2;let pay=calcPayout(odds);if(pay){const dbl=pk.games&&s.games&&pk.games===s.games;if(dbl)pay*=2;pay=applyMultiplier(pay,s.round);const starBadge=pk.games&&s.games&&pk.games===s.games?' ⭐':'';cls='won';bonus=starBadge+' +'+pay+' pts';}}
+        if(s.winner===pk.team){const odds=s.team1.name===pk.team?s.odds1:s.odds2;let pay=calcPayout(odds);if(pay){const dbl=pk.games&&s.games&&pk.games===s.games;if(dbl)pay=Math.round(pay*1.5);pay=applyMultiplier(pay,s.round);const starBadge=pk.games&&s.games&&pk.games===s.games?' ⭐':'';cls='won';bonus=starBadge+' +'+pay+' pts';}}
         else{cls='lost';}
       } else if(s.status==='live') {
         const liveStatus=getLivePickStatus(pk,s);
@@ -639,10 +639,10 @@ function renderSeriesCard(s,player){
     const odds=s.team1?.name===myPick.team?s.odds1:s.odds2;
     const pay=calcPayout(odds);const gStr=myPick.games?' in '+myPick.games+'gms':'';
     if(s.status==='post'&&s.winner){
-      if(s.winner===myPick.team){const dbl=myPick.games&&s.games&&myPick.games===s.games;let fp=pay?(dbl?pay*2:pay):'?';if(fp!=='?')fp=applyMultiplier(fp,s.round);const mx=roundMultiplier(s.round);myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong><br><span class="result-won">+${fp} pts${dbl?' (2x!)':''}${mx>1?' ('+mx+'x)':''}</span></span>`;}
+      if(s.winner===myPick.team){const dbl=myPick.games&&s.games&&myPick.games===s.games;let fp=pay?(dbl?Math.round(pay*1.5):pay):'?';if(fp!=='?')fp=applyMultiplier(fp,s.round);const mx=roundMultiplier(s.round);myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong><br><span class="result-won">+${fp} pts${dbl?' (+50% bonus)':''}${mx>1?' ('+mx+'x)':''}</span></span>`;}
       else{myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong><br><span class="result-lost">Lost</span></span>`;}
     }else{
-      const mx=roundMultiplier(s.round);const mpay=pay?applyMultiplier(pay,s.round):null;const mpay2=pay?applyMultiplier(pay*2,s.round):null;myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong>${mpay?`<br>Potential: ${mpay} pts${myPick.games?' ('+mpay2+' pts if '+myPick.games+'gms)':''}${mx>1?' · '+mx+'x':''}`:''}${!myPick.games&&mpay?'':''}`;
+      const mx=roundMultiplier(s.round);const mpay=pay?applyMultiplier(pay,s.round):null;const mpay2=pay?applyMultiplier(Math.round(pay*1.5),s.round):null;myPickHtml=`<span class="my-pick-label">Your pick: <strong>${myPick.team.split(' ').pop()}${gStr}</strong>${mpay?`<br>Potential: ${mpay} pts${myPick.games?' ('+mpay2+' pts if '+myPick.games+'gms)':''}${mx>1?' · '+mx+'x':''}`:''}${!myPick.games&&mpay?'':''}`;
     }
   }
   const adminBlock=state.isAdmin?`<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(240,85,85,.15)">
