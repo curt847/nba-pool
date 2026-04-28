@@ -73,7 +73,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .lb-sub{font-size:13px;color:var(--text2);margin-top:3px;margin-bottom:10px}
 .lb-picks-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;border-top:1px solid var(--border);padding-top:10px}
 .pick-chip{font-size:12px;font-weight:600;padding:4px 9px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);display:flex;align-items:center;gap:4px}
-.pick-chip.won{background:var(--green);border-color:var(--green);color:#fff}
+.pick-chip.won{background:var(--green);border-color:var(--green);color:#000}
 .pick-chip.lost{background:var(--red);border-color:var(--red);color:#000;text-decoration:line-through}
 .pick-chip.pending{background:rgba(240,192,64,.08);border-color:rgba(240,192,64,.2);color:var(--gold)}
 .pick-chip .bonus{color:var(--gold);margin-left:2px}
@@ -106,6 +106,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .team-name.loser{color:var(--text3);text-decoration:line-through}
 .matchup-vs{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text3)}
 .series-wins{font-size:42px;font-family:'Bebas Neue',sans-serif;color:#fff;text-align:center;margin-top:0;line-height:1;letter-spacing:.04em}
+.series-games-count{font-size:26px;font-family:'Bebas Neue',sans-serif;color:#fff;text-align:center;line-height:1.2;letter-spacing:.04em}
 .series-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
 .series-badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:.06em}
 .badge-pre{background:rgba(74,88,112,.2);color:var(--text3)}
@@ -715,7 +716,7 @@ function renderSeriesCard(s,player){
       <div style="text-align:center;min-width:52px">
         <div class="matchup-vs">VS</div>
         ${(s.team1?.wins||s.team2?.wins)&&s.status!=='pre'?`<div class="series-wins" style="margin-top:5px">${s.team1?.wins||0}-${s.team2?.wins||0}</div>`:''}
-        ${s.status==='post'&&s.games?`<div class="series-wins">${s.games} games</div>`:''}
+        ${s.status==='post'&&s.games?`<div class="series-games-count">${s.games} games</div>`:''}
       </div>
       <div class="matchup-team">
         <div class="team-seed">#${getSeed(s.team2?.abbrev, s.team2)||'?'}</div>
