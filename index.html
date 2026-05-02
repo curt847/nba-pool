@@ -82,6 +82,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .pick-chip.live-tied{background:transparent;border-color:rgba(255,255,255,.3);color:#fff}
 .pick-chip.live-upcoming{background:transparent;border-color:var(--border);color:var(--text3)}
 .lb-live-status{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:12px;font-weight:700}
+.picks-round-sep{flex-basis:100%;height:0;border-top:1px solid var(--border2);margin:4px 0}
 .lls-win{color:var(--green)}.lls-lose{color:var(--red)}.lls-tied{color:#fff}.lls-upcoming{color:var(--text3)}
 
 .series-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:8px}
@@ -611,32 +612,40 @@ function renderLeaderboard(standings){
       if (myWins < oppWins) return 'losing';
       return 'tied';
     }
-    const chips=(p.picks||[]).map(pk=>{
-      const s=state.series.find(x=>x.id===pk.seriesId);if(!s)return'';
+    // Build picks sorted by round so we can insert separators between rounds
+    const sortedPicksForChips=[...(p.picks||[])].sort((a,b)=>{
+      const sa=state.series.find(x=>x.id===a.seriesId);
+      const sb=state.series.find(x=>x.id===b.seriesId);
+      return (sa?.round||0)-(sb?.round||0);
+    });
+    let lockedCount=0,lastChipRound=null;
+    const visibleChips=[];
+    sortedPicksForChips.forEach(pk=>{
+      const s=state.series.find(x=>x.id===pk.seriesId);if(!s)return;
       const seriesLocked=s.status==='live'||s.status==='post';
-      if(!isMe&&!state.isAdmin&&!seriesLocked){
-        return'<span class="pick-chip live-upcoming" title="Picks hidden until series locks">🔒 Locked</span>';
+      if(!isMe&&!state.isAdmin&&!seriesLocked){lockedCount++;return;}
+      const thisRound=s.round||0;
+      if(lastChipRound!==null&&thisRound!==lastChipRound){
+        visibleChips.push('<div class="picks-round-sep"></div>');
       }
+      lastChipRound=thisRound;
       const label=pk.team.split(' ').pop();
       const gLabel=pk.games?' ('+pk.games+'gms)':'';
       let cls='pending',bonus='';
       if(s.status==='post'&&s.winner){
         if(s.winner===pk.team){const odds=s.team1.name===pk.team?s.odds1:s.odds2;let pay=calcPayout(odds);if(pay){const dbl=pk.games&&s.games&&pk.games===s.games;if(dbl)pay=Math.round(pay*1.5);pay=applyMultiplier(pay,s.round);const starBadge=pk.games&&s.games&&pk.games===s.games?' ⭐':'';cls='won';bonus=starBadge+' +'+pay+' pts';}}
         else{cls='lost';}
-      } else if(s.status==='live') {
+      } else if(s.status==='live'){
         const liveStatus=getLivePickStatus(pk,s);
-        if(liveStatus==='winning') cls='live-winning';
-        else if(liveStatus==='losing') cls='live-losing';
-        else if(liveStatus==='tied') cls='live-tied';
+        if(liveStatus==='winning')cls='live-winning';
+        else if(liveStatus==='losing')cls='live-losing';
+        else if(liveStatus==='tied')cls='live-tied';
         else cls='live-upcoming';
       } else {
-        cls='live-upcoming'; // pre, not started
+        cls='live-upcoming';
       }
-      return'<span class="pick-chip '+cls+'">'+label+gLabel+bonus+'</span>';
+      visibleChips.push('<span class="pick-chip '+cls+'">'+label+gLabel+bonus+'</span>');
     });
-    // Deduplicate locked chips
-    const lockedCount=chips.filter(c=>c.includes('🔒')).length;
-    const visibleChips=chips.filter(c=>!c.includes('🔒'));
     const submittedBadge=lockedCount>0?`<span class="pick-chip live-upcoming" title="Picks hidden until series locks">🔒 ${lockedCount} pick${lockedCount>1?'s':''} submitted</span>`:'';
     const allChips=[submittedBadge,...visibleChips].filter(Boolean).join('');
     // Build live status summary (only for visible picks on live series)
