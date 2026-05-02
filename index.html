@@ -738,6 +738,8 @@ function renderSeriesCard(s,player){
       <span class="series-badge badge-${eff}">${badgeLabel[eff]||eff}</span>
       ${myPickHtml}
     </div>
+    ${myPick&&eff==='pre'?`<div style="text-align:right;margin-top:8px"><button onclick="playerUndoPick('${s.id}')" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;padding:0;text-decoration:underline;text-underline-offset:2px" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'">↩ Undo pick</button></div>`:''}
+    
     ${!s.odds1&&!isTbd&&s.status!=='post'?`<div class="odds-warning">Awaiting odds from commissioner</div>`:''}
     ${adminBlock}
   </div>`;
@@ -752,6 +754,20 @@ async function adminDeletePick(playerId, seriesId){
     await apiCall('adminDeletePick',{adminPassword:CONFIG.ADMIN_PASSWORD,playerId,seriesId});
     if(player&&player.picks)player.picks=player.picks.filter(pk=>pk.seriesId!==seriesId);
     render();showToast('Pick deleted - player can now re-pick.','success');
+  }catch(e){showToast('Error: '+e.message,'error');}
+}
+
+async function playerUndoPick(seriesId){
+  const player=state.players.find(p=>p.id===state.currentPlayer);
+  const series=state.series.find(s=>s.id===seriesId);
+  if(!player||!series)return;
+  if(series.status!=='pre'){showToast('Series has already started — pick is locked.','error');return;}
+  const sName=series.team1.abbrev+' vs '+series.team2.abbrev;
+  if(!confirm('Undo your pick for '+sName+'? You can re-pick before the series starts.'))return;
+  try{
+    await apiCall('adminDeletePick',{adminPassword:CONFIG.ADMIN_PASSWORD,playerId:player.id,seriesId});
+    if(player.picks)player.picks=player.picks.filter(pk=>pk.seriesId!==seriesId);
+    render();showToast('Pick removed — make a new one before the series starts!','success');
   }catch(e){showToast('Error: '+e.message,'error');}
 }
 
