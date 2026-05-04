@@ -644,3 +644,83 @@ function migratePickIds() {
   });
   Logger.log('Migration: Picks=' + pm + ' Odds=' + om + ' Results=' + rm);
 }
+
+// ============================================================
+// SHEET BACKUP — daily JSON snapshot to Drive
+//
+// Snapshots every sheet (Players, Picks, SeriesOdds, SeriesResults,
+// SeriesWins) as a JSON file in a "NBA Pool Backups" folder on Drive.
+// Pruned to the most recent BACKUP_KEEP_COUNT files.
+//
+// SETUP (run once each, in this order, from the Apps Script editor):
+//   1. backupToDrive()         — first run authorizes the Drive scope
+//                                and produces an initial backup file
+//   2. installBackupTrigger()  — schedules a daily run at 3am Phoenix
+//
+// Restore is intentionally manual. Open the JSON, copy the relevant
+// sheet's array-of-arrays, and paste back into the sheet by hand. An
+// auto-restore is more likely to make a bad day worse than to help.
+// ============================================================
+
+const BACKUP_FOLDER_NAME = 'NBA Pool Backups';
+const BACKUP_KEEP_COUNT  = 30;
+const BACKUP_SHEETS      = ['Players', 'Picks', 'SeriesOdds', 'SeriesResults', 'SeriesWins'];
+
+function backupToDrive() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const data = {
+    spreadsheetName: ss.getName(),
+    spreadsheetId: ss.getId(),
+    backupAt: new Date().toISOString(),
+    schemaVersion: 1,
+    sheets: {}
+  };
+
+  BACKUP_SHEETS.forEach(name => {
+    const sh = ss.getSheetByName(name);
+    if (!sh) { Logger.log('Sheet missing, skipped: ' + name); return; }
+    data.sheets[name] = sh.getDataRange().getValues();
+  });
+
+  const folders = DriveApp.getFoldersByName(BACKUP_FOLDER_NAME);
+  const folder  = folders.hasNext() ? folders.next() : DriveApp.createFolder(BACKUP_FOLDER_NAME);
+
+  const dateStr  = Utilities.formatDate(new Date(), 'America/Phoenix', 'yyyy-MM-dd_HHmm');
+  const filename = 'nba-pool-backup_' + dateStr + '.json';
+  const file     = folder.createFile(filename, JSON.stringify(data, null, 2), 'application/json');
+  Logger.log('Wrote: ' + filename + ' (' + file.getSize() + ' bytes)');
+
+  const candidates = [];
+  const it = folder.getFilesByType('application/json');
+  while (it.hasNext()) {
+    const f = it.next();
+    if (f.getName().indexOf('nba-pool-backup_') === 0) {
+      candidates.push({ file: f, created: f.getDateCreated() });
+    }
+  }
+  candidates.sort((a, b) => b.created - a.created);
+  let pruned = 0;
+  candidates.slice(BACKUP_KEEP_COUNT).forEach(c => { c.file.setTrashed(true); pruned++; });
+  Logger.log('Kept: ' + Math.min(candidates.length, BACKUP_KEEP_COUNT) + ', pruned: ' + pruned);
+
+  return { ok: true, filename: filename, kept: Math.min(candidates.length, BACKUP_KEEP_COUNT), pruned: pruned };
+}
+
+function installBackupTrigger() {
+  let removed = 0;
+  ScriptApp.getProjectTriggers()
+    .filter(t => t.getHandlerFunction() === 'backupToDrive')
+    .forEach(t => { ScriptApp.deleteTrigger(t); removed++; });
+
+  ScriptApp.newTrigger('backupToDrive')
+    .timeBased()
+    .atHour(3)
+    .everyDays(1)
+    .inTimezone('America/Phoenix')
+    .create();
+
+  const msg = 'Backup trigger installed: daily at 3am Phoenix'
+    + (removed ? ' (removed ' + removed + ' previous trigger(s))' : '');
+  Logger.log(msg);
+  return msg;
+}
