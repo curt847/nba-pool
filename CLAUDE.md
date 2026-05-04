@@ -24,7 +24,7 @@ Known API actions invoked from the client:
 - `syncScores` — admin-only, refreshes ESPN-derived series data on the server
 - `adminSetOdds`, `adminAddPlayer`, `adminResetPin`, `adminRemovePlayer`, `adminDeletePick`
 
-The Apps Script source is **not in this repo** — it's deployed separately. Server-side changes (new actions, schema tweaks) require editing that script in the Apps Script editor and re-deploying. If a client change needs server support, flag it explicitly.
+The Apps Script source is tracked at **`apps-script/Code.js`** in this repo and synced via [clasp](https://github.com/google/clasp). It's a **container-bound script** attached to the `NBA Pool Odds` Google Sheet (the data store). See `apps-script/README.md` for the scriptId, sheet link, and pull/push commands. Server-side changes still require a redeploy in the Apps Script editor (or `clasp deploy`) to take effect at the live `PROXY_URL` — pushing source via `clasp push` only updates the editor's "head," not what the deployment serves.
 
 ### Client state model
 
