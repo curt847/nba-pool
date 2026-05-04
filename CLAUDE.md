@@ -6,7 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Single-file static web app: `index.html` contains all HTML, CSS, and JS. There is no package.json, no build, no test suite, no bundler. Vanilla JS, no frameworks. To "run" it, open the file in a browser (or serve the directory with any static server, e.g. `python3 -m http.server`). Edits are live on refresh.
 
-The repository is not a git repo at the time of writing.
+## Deployment
+
+Hosted on **GitHub Pages**: https://curt847.github.io/nba-pool/
+
+Source: `main` branch, root directory. Pushing to `main` automatically rebuilds and publishes. Remote is `git@github.com:curt847/nba-pool.git` over SSH.
 
 ## Architecture
 
